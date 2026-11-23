@@ -3200,17 +3200,17 @@ code {
     <div class="section-head reveal">
       <div>
         <div class="kicker">02 / DISTRIBUTION</div>
-        <h2 id="distribution-title">实际分布</h2>
+        <h2 id="distribution-title" data-i18n="dist.title">实际分布</h2>
       </div></div>
 
     <div class="panel distribution-panel reveal">
       <div class="distribution-head">
-        <div class="chart-title">MIX 分布 <span id="distribution-sub">—</span></div>
+        <div class="chart-title"><span data-i18n="dist.heading">MIX 分布</span> <span id="distribution-sub">—</span></div>
         <div class="distribution-quantiles" id="distribution-quantiles"></div>
       </div>
       <div class="distribution-track" id="distribution-track"></div>
       <div class="distribution-axis" id="distribution-axis" aria-hidden="true"></div>
-      <div class="distribution-foot">悬停查看 · 点击编辑</div>
+      <div class="distribution-foot" data-i18n="dist.foot">悬停查看 · 点击编辑</div>
     </div>
   </section>
 
@@ -3221,33 +3221,33 @@ code {
     <div class="section-head reveal">
       <div>
         <div class="kicker">03 / READOUT</div>
-        <h2 id="readout-title">同级别的模型，也有明显的体感差异</h2>
+        <h2 id="readout-title" data-i18n="readout.title">同级别的模型，也有明显的体感差异</h2>
       </div></div>
 
     <div class="insight-grid">
       <article class="insight-card reveal" style="--delay: 0ms">
         <span class="tag">Claude</span>
-        <h3>能写出好的计划</h3>
-        <p>类似于 Claude 这种能写出好的计划的模型很能写出高质量的代码。让 Claude 对 Claude 进行对抗性审查大概率只是浪费钱，大部分时候找不出有用的内容。</p>
+        <h3 data-i18n="readout.c1.h">能写出好的计划</h3>
+        <p data-i18n="readout.c1.p">类似于 Claude 这种能写出好的计划的模型很能写出高质量的代码。让 Claude 对 Claude 进行对抗性审查大概率只是浪费钱，大部分时候找不出有用的内容。</p>
       </article>
       <article class="insight-card reveal" style="--delay: 60ms">
         <span class="tag">GPT</span>
-        <h3>能审核出代码问题</h3>
-        <p>类似于 GPT 这样很能审核出代码问题的模型很能编写有效的测试。让 GPT 对 GPT 审查则会越来越乱，最后没合并多少代码。</p>
+        <h3 data-i18n="readout.c2.h">能审核出代码问题</h3>
+        <p data-i18n="readout.c2.p">类似于 GPT 这样很能审核出代码问题的模型很能编写有效的测试。让 GPT 对 GPT 审查则会越来越乱，最后没合并多少代码。</p>
       </article>
       <article class="insight-card reveal" style="--delay: 120ms">
         <span class="tag">Gemini</span>
-        <h3>文档创作和调研</h3>
-        <p>而到了文档创作和调研，Gemini 的表现断层式领先。</p>
+        <h3 data-i18n="readout.c3.h">文档创作和调研</h3>
+        <p data-i18n="readout.c3.p">而到了文档创作和调研，Gemini 的表现断层式领先。</p>
       </article>
       <article class="insight-card reveal" style="--delay: 180ms">
-        <span class="tag">趋势</span>
-        <h3>以编程能力外推</h3>
-        <p>但就过去一年和未来可能半年到一年的趋势来看，以编程能力为绝对核心来衡量模型的总体实力，或者说以编程能力来外推模型在科研，机器人，或者常见办公领域的能力，具有相当大的解释力。</p>
+        <span class="tag" data-i18n="readout.trend">趋势</span>
+        <h3 data-i18n="readout.c4.h">以编程能力外推</h3>
+        <p data-i18n="readout.c4.p">但就过去一年和未来可能半年到一年的趋势来看，以编程能力为绝对核心来衡量模型的总体实力，或者说以编程能力来外推模型在科研，机器人，或者常见办公领域的能力，具有相当大的解释力。</p>
       </article>
 
       <div class="insight-callout reveal" style="--delay: 220ms">
-        <p>当你在选择模型的时候，这个指数结合你对模型体感的加权可以作为模型的性能分，然后按照订阅实际可用额度和厂家补贴额度算出成本，就可以计算性价比以衡量模型是否符合你的需求了。</p>
+        <p data-i18n="readout.callout">当你在选择模型的时候，这个指数结合你对模型体感的加权可以作为模型的性能分，然后按照订阅实际可用额度和厂家补贴额度算出成本，就可以计算性价比以衡量模型是否符合你的需求了。</p>
       </div>
     </div>
   </section>
@@ -3259,12 +3259,12 @@ code {
     <div class="section-head reveal">
       <div>
         <div class="kicker">04 / METHOD</div>
-        <h2 id="method-title">公式、回退与对照</h2>
+        <h2 id="method-title" data-i18n="method.title">公式、回退与对照</h2>
       </div></div>
 
     <div class="method-grid">
       <div class="method-card reveal">
-        <h3>核心公式 <span>0–1 scale</span></h3>
+        <h3><span data-i18n="method.core">核心公式</span> <span>0–1 scale</span></h3>
         <div class="eq">
           <b>BASE</b> <span class="op">=</span> 0.35·FC <span class="op">+</span> 0.20·CB <span class="op">+</span> 0.15·SWE<br>
           <span class="eq-sub"><span class="op">+</span> 0.15·TB <span class="op">+</span> 0.10·VCB100 <span class="op">+</span> 0.05·FSWE</span>
@@ -3288,21 +3288,21 @@ code {
       </div>
 
       <div class="method-card reveal" style="--delay: 60ms">
-        <h3>缺测处理 <span>transparent imputation</span></h3>
+        <h3><span data-i18n="method.impute">缺测处理</span> <span>transparent imputation</span></h3>
         <div class="prose" style="max-width:none">
-          <p style="font-size:10px;line-height:1.8;margin-bottom:10px"><b>CB 缺失：</b>不插补。把 CB 的 0.20 权重按 FC +0.10、TB +0.05、FSWE +0.05 回退，重新配平到 1.00。表内显示为“回退”。</p>
-          <p style="font-size:10px;line-height:1.8;margin-bottom:10px"><b>PB 缺失：</b>按最近地底分拟合。优先同族低阶实测；没有同族锚点时取同级邻近值或该项最低实测。</p>
-          <p style="font-size:10px;line-height:1.8;margin-bottom:10px"><b>VCB100 / FSWE 缺失：</b>同族优先，其次按能力邻近模型拟合。每个建议值都带来源，可在抽屉里直接改。</p>
+          <p data-i18n-html="method.impute.p1" style="font-size:10px;line-height:1.8;margin-bottom:10px"><b>CB 缺失：</b>不插补。把 CB 的 0.20 权重按 FC +0.10、TB +0.05、FSWE +0.05 回退，重新配平到 1.00。表内显示为“回退”。</p>
+          <p data-i18n-html="method.impute.p2" style="font-size:10px;line-height:1.8;margin-bottom:10px"><b>PB 缺失：</b>按最近地底分拟合。优先同族低阶实测；没有同族锚点时取同级邻近值或该项最低实测。</p>
+          <p data-i18n-html="method.impute.p3" style="font-size:10px;line-height:1.8;margin-bottom:10px"><b>VCB100 / FSWE 缺失：</b>同族优先，其次按能力邻近模型拟合。每个建议值都带来源，可在抽屉里直接改。</p>
         </div>
-        <div class="method-note">
+        <div class="method-note" data-i18n-html="method.note">
           <b>状态标记：</b>无前缀 = 实测；<span style="color:var(--warn)">≈</span> = 拟合；<span style="color:var(--faint)">回退</span> = CB 缺失触发公式回退；<span style="color:var(--faint)">—</span> = 按 0 计。
         </div>
       </div>
 
       <div class="method-card reveal" style="--delay: 80ms">
-        <h3>AA 对照 <span>same-anchor scaling</span></h3>
+        <h3><span data-i18n="method.aa">AA 对照</span> <span>same-anchor scaling</span></h3>
         <div class="prose" style="max-width:none">
-          <p style="font-size:10px;line-height:1.8;margin-bottom:10px">
+          <p data-i18n-html="method.aa.p1" style="font-size:10px;line-height:1.8;margin-bottom:10px">
             AA Intelligence Index v5.0.1 是 0–100 的综合智能分，权重与这里不同。它不是“正确答案”，而是一个独立的参照系。
           </p>
           <p style="font-size:10px;line-height:1.8;margin-bottom:10px" data-i18n-html="method.aa.p2">
@@ -3790,6 +3790,9 @@ const I18N = {
     'table.empty': '当前筛选没有模型。试试“全部候选”。',
     'table.refPool': '参考池',
     'table.cbFallbackTip': 'CB 缺失：公式回退（FC +0.10 / TB +0.05 / FSWE +0.05）',
+    'table.missingDots': '缺分 {n}/8',
+    'table.dotTip': '{metric}：{status}',
+    'table.rowAria': '{name}，混合指数 {value}',
     'legend.measured': '实测',
     'legend.fitted': '拟合 ≈',
     'legend.fallback': 'CB 回退 / 未填',
@@ -4070,6 +4073,9 @@ const I18N = {
     'table.empty': 'No models match this filter. Try “All”.',
     'table.refPool': 'reference pool',
     'table.cbFallbackTip': 'CB missing: formula fallback (FC +0.10 / TB +0.05 / FSWE +0.05)',
+    'table.missingDots': '{n}/8 missing',
+    'table.dotTip': '{metric}: {status}',
+    'table.rowAria': '{name}, mixture index {value}',
     'legend.measured': 'Observed',
     'legend.fitted': 'Fitted ≈',
     'legend.fallback': 'CB fallback / blank',
@@ -4261,6 +4267,32 @@ function statusMeta(status) {
   if (status === 'fitted') return { label: t('status.fitted'), cls: 'fit' };
   if (status === 'fallback') return { label: t('status.fallback'), cls: 'fallback' };
   return { label: t('status.blank'), cls: 'fallback' };
+}
+
+/* The `suggest.*.src` strings in INITIAL_MODELS are authorship notes written in
+   Chinese. They are rendered in the fit table and in metric tooltips, so they
+   need an English form too; translate them structurally instead of duplicating
+   the data. Unknown shapes fall through to the original string. */
+const SRC_KIND_EN = {
+  '同族': 'same family',
+  '邻近档': 'nearby tier',
+  '同族低阶': 'same family, lower tier',
+  '同族，VALS': 'same family, VALS',
+  '同族低阶，VALS': 'same family, lower tier, VALS',
+  '同级邻近，VALS': 'same-tier peer, VALS'
+};
+
+function fitSrcText(src) {
+  if (!src || lang === 'zh') return src;
+  let m = src.match(/^(.+?) 实测 ([\d.]+)%（(.+?)）$/);
+  if (m) return `${m[1]} measured ${m[2]}% (${SRC_KIND_EN[m[3]] || m[3]})`;
+  m = src.match(/^(.+?) 无 PB 实测；取邻近档 ([\d.]+)%$/);
+  if (m) return `no measured PB for ${m[1]}; nearest peer ${m[2]}%`;
+  m = src.match(/^按地底分 ([\d.]+)%$/);
+  if (m) return `counted at the floor (${m[1]}%)`;
+  m = src.match(/^地底分 ([\d.]+)%$/);
+  if (m) return `floor value ${m[1]}%`;
+  return src;
 }
 
 function computeAll() {
@@ -4534,7 +4566,7 @@ function renderTable(visible, computed) {
       const st = r.eff[k].status;
       const cls = st === 'observed' || st === 'manual' ? 'on' : st === 'fitted' ? 'fit' : 'off';
       const meta = statusMeta(st);
-      return `<i class="${cls}" title="${METRICS[k].label}：${meta.label}"></i>`;
+      return `<i class="${cls}" title="${escapeHtml(t('table.dotTip', { metric: METRICS[k].label, status: meta.label }))}"></i>`;
     }).join('');
 
     const metricCells = KEYS.map((k) => {
@@ -4547,7 +4579,7 @@ function renderTable(visible, computed) {
       else text = pct(e.value);
 
       let title = `${METRICS[k].label} · ${meta.label}`;
-      if (e.status === 'fitted' && r.model.suggest && r.model.suggest[k]) title += `：${r.model.suggest[k].src}`;
+      if (e.status === 'fitted' && r.model.suggest && r.model.suggest[k]) title += `${lang === 'zh' ? '：' : ': '}${fitSrcText(r.model.suggest[k].src)}`;
       if (k === 'cb' && e.status === 'fallback') title = t('table.cbFallbackTip');
 
       const stateClass = e.status === 'fitted' ? 'is-fit' : `is-${e.status}`;
@@ -4560,7 +4592,7 @@ function renderTable(visible, computed) {
 
     return `
       <tr class="${selected}${ghost}" data-id="${r.model.id}" tabindex="0"
-          aria-label="${escapeHtml(r.model.name)}，${fmt(r.display)}">
+          aria-label="${escapeHtml(t('table.rowAria', { name: r.model.name, value: fmt(r.display) }))}">
         <td class="c-rank">${String(idx + 1).padStart(2, '0')}</td>
         <td class="c-model">
           <div class="model-line">
@@ -4572,7 +4604,7 @@ function renderTable(visible, computed) {
         <td class="c-score">${fmt(r.display)}</td>
         <td class="c-gap ${gapCls}">${gapText}</td>
         <td class="center c-missing">
-          <span class="dot-strip" title="缺分 ${r.missingCount}/8">${dots}</span>
+          <span class="dot-strip" title="${t('table.missingDots', { n: r.missingCount })}">${dots}</span>
           <span class="missing-count">${r.missingCount}/8</span>
         </td>
         ${metricCells}
@@ -4746,7 +4778,7 @@ function renderFitDetails(computed) {
           <td>${METRICS[x.key].label}</td>
           <td class="num">${pct(x.s.rec)}</td>
           <td class="num">${pct(x.s.floor)}</td>
-          <td class="src">${escapeHtml(x.s.src)}</td>
+          <td class="src">${escapeHtml(fitSrcText(x.s.src))}</td>
         </tr>`).join('')
     : `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">${t('fit.empty')}</td></tr>`;
 }
