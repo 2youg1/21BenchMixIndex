@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-font="sarasa">
+<html lang="zh-CN" data-theme="light" data-font="syssans">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
   <title>编码模型混合指数 · Coding Model Mixture Index</title>
   <meta name="description" content="一个编码模型混合指数：把 AA Coding Agent、VALS、CursorBench、FrontierSWE 与 ProgramBench 的公开数据压成一个可复算的决策工具。">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f2efe7">
+  <meta name="theme-color" content="#f8f8f5">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2317171a'/%3E%3Cpath d='M8 22V10h4l4 7 4-7h4v12h-3.2v-6.4L16 23l-4.8-7.4V22H8Z' fill='%23f2efe7'/%3E%3C/svg%3E">
   <script>
     (function () {
@@ -25,16 +25,14 @@
   <style>
 /* ==========================================================================
    Coding Model Mixture Index — styles
-   Font: local Sarasa Mono / 更纱黑体等宽 (no external font requests)
+   Fonts: local system families (no external font requests)
    License: CC BY-NC-SA 4.0
    ========================================================================== */
 
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --font-sans: "Sarasa Mono SC", "Sarasa Gothic SC", "Sarasa Term SC",
-    "更纱黑体等宽", "更纱黑体", "Sarasa Mono TC", "Sarasa Mono J",
-    "Cascadia Code", "JetBrains Mono", Consolas, "Noto Sans Mono CJK SC", monospace;
+  --font-sans: system-ui, "Segoe UI", "Microsoft YaHei", sans-serif;
 
   --bg: #f2efe7;
   --bg-2: #eae5da;
@@ -634,34 +632,6 @@ h2 {
 }
 .hero-meta .mono { color: var(--ink-2); }
 
-.hero-stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
-  margin-top: 22px;
-  border: 1px solid var(--line);
-  background: var(--line);
-}
-.hero-stat {
-  background: var(--panel);
-  padding: 14px 12px 12px;
-}
-.hero-stat strong {
-  display: block;
-  font-size: clamp(1.4rem, 2.1vw, 1.9rem);
-  line-height: 1;
-  letter-spacing: -.05em;
-  font-variant-numeric: tabular-nums;
-}
-.hero-stat span {
-  display: block;
-  margin-top: 8px;
-  font-size: 9px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
 /* Top-3 signal card */
 .signal-card {
   position: relative;
@@ -748,40 +718,6 @@ h2 {
   color: var(--muted);
 }
 .signal-foot strong { color: var(--ink); font-weight: 600; }
-
-/* Ticker */
-.ticker {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: var(--panel-2);
-  overflow: hidden;
-  user-select: none;
-}
-.ticker-track {
-  display: flex;
-  width: max-content;
-  animation: marquee 46s linear infinite;
-}
-.ticker:hover .ticker-track { animation-play-state: paused; }
-.ticker-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 18px;
-  font-size: 9px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.ticker-item::after {
-  content: "";
-  width: 4px; height: 4px;
-  border-radius: 50%;
-  background: var(--line-strong);
-}
 
 /* --------------------------------------------------------------------------
    Preface / editorial
@@ -881,7 +817,7 @@ h2 {
   text-transform: uppercase;
   color: var(--muted);
 }
-.control-label span {
+.control-label span[title] {
   display: inline-grid;
   place-items: center;
   width: 14px; height: 14px;
@@ -1932,6 +1868,7 @@ tbody tr.ref-divider:hover { background: var(--panel-2); }
   pointer-events: none;
 }
 .drawer.open { pointer-events: auto; }
+.drawer[aria-hidden="true"], .modal[aria-hidden="true"] { visibility: hidden; }
 .drawer-backdrop {
   position: absolute;
   inset: 0;
@@ -2346,7 +2283,7 @@ tbody tr.ref-divider:hover { background: var(--panel-2); }
   .hero, .section { padding-left: 16px; padding-right: 16px; }
   .hero { padding-top: 34px; }
   .hero-title { font-size: clamp(2.9rem, 14.5vw, 4.5rem); }
-  .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
   .hero-meta { font-size: 9px; }
   .kicker { font-size: 9px; }
   h2 { font-size: clamp(1.6rem, 8vw, 2.2rem); }
@@ -2639,144 +2576,380 @@ code {
 }
 
 
-/* --------------------------------------------------------------------------
-   Distribution
-   -------------------------------------------------------------------------- */
-
-.distribution-panel { padding: 18px; }
-.distribution-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+/* Snapshot overview and index workspace */
+:root { --max: 1344px; --gutter: clamp(18px, 4.1vw, 62px); }
+[data-theme="light"] {
+  --bg: #f6f6f3; --bg-2: #edeeea; --panel: #fff; --panel-2: #f4f5f1;
+  --panel-3: #eaebe6; --ink: #202321; --ink-2: #434841; --muted: #586059;
+  --faint: #69716b; --line: #dadcd5; --line-strong: #abb2a9; --bar-track: #e8eae4;
+  --accent: #bc3b20; --focus: #b83b22; --header-bg: rgb(246 246 243 / .94);
+  --shadow: 0 2px 6px rgb(24 36 28 / .035);
 }
-.distribution-quantiles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
+[data-theme="dark"] {
+  --bg: #101411; --bg-2: #151a17; --panel: #191e1a; --panel-2: #1e241f;
+  --panel-3: #283029; --ink: #f2f3ea; --ink-2: #cdd4ca; --muted: #a8b2a7;
+  --faint: #98a396; --line: #353d35; --line-strong: #566356; --bar-track: #2e362e;
+  --accent: #ff906c; --focus: #ff906c; --header-bg: rgb(16 20 17 / .94);
 }
-.distribution-quantiles > span {
-  display: grid;
-  gap: 1px;
-  font-size: 8px;
-  letter-spacing: .08em;
-  color: var(--faint);
-  text-transform: uppercase;
+[hidden] { display: none !important; }
+body { font-size: 1rem; }
+body::before, body::after, .hero::before, .hero-title .accent::after { content: none; }
+.hero, .section, .header-inner, .footer-inner, .footer-bottom { padding-inline: var(--gutter); }
+.brand { text-transform: none; letter-spacing: -.055em; font-size: 1.22rem; gap: .58rem; }
+.brand-light { font-weight: 450; }
+.brand-mark { display: grid; place-content: center; width: 32px; height: 32px; transform: none; box-shadow: none; border-radius: 8px 8px 8px 2px; background: var(--ink); color: var(--panel); font: 800 16px/1 Arial,sans-serif; letter-spacing: -.08em; }
+.main-nav a, .mobile-nav a, .btn { font-size: .84rem; }
+.btn { min-height: 37px; }
+.hero { align-items: center; padding-block: clamp(38px,5vw,76px); gap: clamp(40px,7vw,112px); grid-template-columns: 1.1fr minmax(0,.9fr); }
+.hero-eyebrow { border: 0; border-radius: 0; padding: 0; background: transparent; margin-bottom: 19px; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.hero-eyebrow .live-dot { width: 20px; height: 3px; border-radius: 0; animation: none; }
+.hero-title { font-size: clamp(3.25rem,5.3vw,5.55rem); line-height: 1.09; letter-spacing: -.065em; text-transform: none; }
+.hero-title > span { display: block; }
+.hero-title > span > span { display: inline; }
+.hero-lede { max-width: 33em; font-size: 1rem; line-height: 1.75; margin-top: 18px; text-wrap: pretty; }
+.hero-actions { margin-top: 22px; }
+.hero-meta { gap: 8px 20px; margin-top: 20px; padding-top: 0; border: 0; font-size: .78rem; }
+.hero-meta b { color: var(--ink); }
+.signal-card {
+  --ink: #f4f5ec; --ink-2: #d7dfd4; --muted: #b7c2b7; --faint: #a3b1a4;
+  --line: #3e493f; --panel-2: #303a32; --focus: #ffa17f;
+  width: 100%; max-width: none; background: #18211d; color: var(--ink); border: 1px solid #344138;
+  border-radius: 15px; padding: 20px 24px 16px; box-shadow: 0 12px 28px -16px #10221880;
 }
-.distribution-quantiles b {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -.02em;
-  font-variant-numeric: tabular-nums;
+.signal-card::before { display: none; }
+.signal-head { margin: 0; color: var(--ink); font-size: .87rem; letter-spacing: .03em; }
+.signal-head .live-dot { width: 9px; height: 9px; border-radius: 2px; background: #ff946d; }
+.signal-head .mono, .profile-caption, .signal-foot { font-size: .75rem; }
+.profile-plot { display: grid; grid-template-columns: 2em minmax(0,1fr); gap: 5px; margin: 18px 0 17px; }
+.profile-axis { display: flex; flex-direction: column; justify-content: space-between; font: 12px/1 Consolas,monospace; color: var(--faint); }
+.profile-bars { display: flex; align-items: stretch; gap: 3px; height: clamp(72px,7vw,104px); border-block: 1px solid #475247; background: repeating-linear-gradient(to top,transparent 0 calc(25% - 1px),#354238 calc(25% - 1px) 25%); }
+.profile-bar { position: relative; min-width: 0; flex: 1 1 0; border: 0; padding: 0; background: none; cursor: pointer; }
+.profile-bar i { position: absolute; bottom: 0; left: 0; width: 100%; height: max(2px,var(--height)); border-radius: 2px 2px 0 0; background: #bd7357; }
+.profile-bar:nth-child(-n+3) i { background: #ffa17b; }
+.profile-bar:is(:hover,:focus-visible) i { background: #ffe1bb; }
+.profile-empty { align-self: center; color: var(--muted); font-size: .85rem; }
+.profile-caption { display: flex; justify-content: space-between; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+.signal-list { gap: 0; }
+.signal-row { padding: 6px 0; }
+.signal-name { color: var(--ink); font-size: .88rem; }
+.signal-score { color: #ffe4d4; font: 600 1rem/1.3 Consolas,monospace; }
+.signal-rank { font-size: .75rem; }
+.signal-foot { padding-top: 8px; margin-top: 5px; letter-spacing: 0; }
+.section { padding-block: clamp(38px,4.5vw,70px); }
+.section-head { margin-bottom: 20px; }
+.kicker { color: var(--accent); font-size: .75rem; }
+.section h2 { font-size: clamp(1.8rem,3vw,2.7rem); }
+.board { background: var(--panel); overflow: clip; }
+.finder,.control-deck,.settings-strip,.view-tools { padding: 14px clamp(13px,2vw,26px); }
+.finder,.view-tools,.weight-footer { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.finder { border-bottom: 1px solid var(--line); }
+.search-field { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 0 11px; width: min(280px,100%); background: var(--panel); border: 1px solid var(--line-strong); border-radius: 7px; }
+.search-field:focus-within { outline: 2px solid var(--focus); outline-offset: 1px; }
+.search-field svg { width: 18px; color: var(--muted); flex: none; }
+.search-field input { color: var(--ink); background: none; border: 0; width: 100%; min-width: 0; height: 39px; font-size: .9rem; outline: 0; }
+.result-count { margin-inline-start: auto; font-size: .85rem; color: var(--muted); }
+.control-deck { background: var(--panel); justify-content: flex-start; border-radius: 0; gap: 12px 20px; }
+.control-label,.slider-label,.slider-val,.segmented button small,.control-hint { font-size: .75rem; }
+.segmented button, .select-wrap select, .settings summary { font-size: .85rem; }
+.segmented button { min-height: 32px; }
+.select-wrap select { min-height: 36px; max-width: 100%; }
+.settings-strip { display: grid; grid-template-columns: 1.7fr 1fr; align-items: start; gap: 12px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+.settings, .bench-entry { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.settings summary, .bench-entry summary { padding: 9px 13px; cursor: pointer; font-weight: 650; }
+.settings summary::marker, .bench-entry summary::marker { color: var(--accent); }
+.settings summary small { margin-left: .5rem; font-size: .75rem; color: var(--muted); }
+.settings.custom summary small { color: var(--accent); }
+.settings-body { padding: 9px 14px 14px; }
+.settings-body p, .active-equation { font-size: .84rem; line-height: 1.65; color: var(--ink-2); }
+#weight-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 18px; margin-block: 13px; }
+.weight-field { display: grid; grid-template-columns: 1fr auto; align-items: center; font-size: .85rem; }
+.weight-field span { grid-column: 1 / -1; }
+.weight-field small { color: var(--muted); font-size: .75rem; }
+.weight-field input { width: 100%; min-width: 0; accent-color: var(--accent); }
+.weight-field output { padding-left: 8px; font-variant-numeric: tabular-nums; }
+.weight-footer { justify-content: space-between; font-size: .85rem; }
+.active-equation { margin-top: 9px; white-space: pre-line; font-family: Consolas,monospace; }
+.display-fields { display: grid; gap: 13px; }
+.view-tools { justify-content: space-between; border-bottom: 1px solid var(--line); }
+.kpi-sub,.chart-model-sub,.chart-foot,.chart-legend,.model-sub,.table-legend,.fit-details summary,.chart-scale,.kpi-label { font-size: .76rem; }
+.kpi-sub { white-space: normal; }
+.kpi-label i { display: none; }
+.chart-model-name,.model-name,.chart-title,.field-label, .c-score { font-size: .9rem; }
+.chart-title > span:first-child { color: var(--ink); font-size: 1rem; font-weight: 650; }
+.chart-title > span:last-child,.chart-score span,.chart-gap-label,.field-hint { font-size: .76rem; }
+.chart-score { font-size: .96rem; }
+.weight-field input[type="number"], .snapshot-field input { color: var(--ink); background: var(--panel); border: 1px solid var(--line-strong); border-radius: 5px; padding: 5px; font-size: .85rem; }
+.weight-field input[type="number"] { width: 5em; margin-left: 6px; }
+.weight-field input[type="range"] { min-height: 30px; }
+.snapshot-field { display: grid; gap: 4px; font-size: .85rem; color: var(--ink-2); }
+.snapshot-field input { width: fit-content; }
+.c-metric.is-filled,.field-status.filled { color: var(--info); }
+.table-legend .filled { background: var(--info); }
+.chart-scale .scale-right { grid-column: 4; }
+.table-wrap { overscroll-behavior-x: contain; }
+table { font-size: .85rem; }
+thead th { font-size: .75rem; }
+#metric-table th a { text-decoration: underline dotted; text-underline-offset: .24em; }
+#metric-table .c-model,#metric-table th:nth-child(2) { position: sticky; left: 0; background: var(--panel); z-index: 2; box-shadow: 1px 0 var(--line); }
+#metric-table th:nth-child(2) { z-index: 6; background: var(--panel-2); }
+.cell-value,.cell-editor { font: inherit; font-variant-numeric: tabular-nums; color: inherit; }
+.cell-value { border: 0; padding: 4px; border-radius: 4px; cursor: text; background: none; }
+.cell-value:hover,.cell-value:focus-visible { background: var(--panel-3); }
+.cell-editor { width: 6.5em; padding: 3px; background: var(--panel); border: 1px solid var(--focus); }
+.table-legend .manual { background: var(--accent); }
+.bench-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 12px; }
+.bench-entry summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 15px 18px; }
+.bench-entry summary::after { content: '+'; color: var(--accent); font: 1.4rem/1 monospace; }
+.bench-entry[open] summary::after { content: '−'; }
+.bench-entry summary small { display: block; font: 600 .76rem/1.6 Consolas,monospace; color: var(--accent); }
+.bench-entry summary strong { font-size: 1.05rem; }
+.bench-body { padding: 0 18px 16px; }
+.bench-body p,.scope-note p,.prose p,.method-card .prose p { font-size: 1rem !important; line-height: 1.75 !important; }
+.bench-body dl { font-size: .85rem; }
+.bench-body dl div { display: grid; grid-template-columns: minmax(5.8em,30%) 1fr; gap: 12px; padding: 5px 0; border-top: 1px solid var(--line); }
+.bench-body dt { color: var(--muted); }
+.bench-body dd { margin: 0; }
+.bench-links { display: flex; gap: 18px; font-size: .88rem; }
+.bench-links a { color: var(--accent); text-decoration: underline; text-underline-offset: .2em; }
+.scope-note { margin-top: 24px; max-width: 86ch; border-left: 3px solid var(--accent); padding-left: 18px; }
+.scope-note p { margin-top: 8px; color: var(--ink-2); }
+@media (max-width: 980px) {
+  .hero { grid-template-columns: 1fr minmax(0,.9fr); gap: 26px; }
+  .control-group[style] { margin-left: 0 !important; }
 }
-.distribution-track {
-  position: relative;
-  height: 120px;
-  margin-top: 18px;
-  border-bottom: 1px solid var(--line);
-}
-.dist-grid {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--x);
-  width: 1px;
-  background: var(--line);
-  opacity: .75;
-  pointer-events: none;
-}
-.dist-bin {
-  position: absolute;
-  left: var(--x);
-  bottom: 0;
-  width: var(--w);
-  height: var(--h);
-  transform: translateX(-50%);
-  background: color-mix(in srgb, var(--panel-2) 88%, transparent);
-  border-radius: 4px 4px 0 0;
-  opacity: .9;
-  pointer-events: none;
-}
-.dist-dot {
-  position: absolute;
-  left: var(--x);
-  bottom: var(--y);
-  width: 10px;
-  height: 10px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: var(--lab);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lab) 14%, transparent);
-  transform: translateX(-50%);
-  cursor: pointer;
-  transition: transform .18s ease, box-shadow .18s ease;
-  z-index: 1;
-}
-.dist-dot:hover,
-.dist-dot:focus-visible {
-  transform: translateX(-50%) scale(1.55);
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--lab) 18%, transparent);
-  z-index: 6;
-}
-.distribution-axis {
-  position: relative;
-  height: 24px;
-  margin-top: 4px;
-}
-.distribution-axis span {
-  position: absolute;
-  left: var(--x);
-  transform: translateX(-50%);
-  font-size: 8px;
-  color: var(--faint);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.distribution-axis span:first-child { transform: none; }
-.distribution-axis span:last-child { transform: translateX(-100%); }
-.distribution-foot {
-  margin-top: 4px;
-  font-size: 8px;
-  letter-spacing: .04em;
-  color: var(--faint);
-}
-.distribution-tooltip {
-  position: absolute;
-  z-index: 20;
-  min-width: 158px;
-  padding: 9px 10px;
-  border-radius: 8px;
-  background: var(--tooltip-bg);
-  color: var(--tooltip-ink);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, .22);
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity .15s ease, transform .15s ease;
-}
-.distribution-tooltip.show { opacity: 1; transform: none; }
-.dt-name { font-size: 10px; font-weight: 700; }
-.dt-meta { margin-top: 2px; font-size: 8px; opacity: .6; }
-.dt-score {
-  margin-top: 4px;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -.04em;
-  font-variant-numeric: tabular-nums;
-}
-.dt-row { margin-top: 2px; font-size: 8px; opacity: .72; }
-
 @media (max-width: 720px) {
-  .distribution-panel { padding: 14px; }
-  .distribution-head { gap: 10px; }
-  .distribution-quantiles { gap: 10px; }
-  .distribution-track { height: 110px; margin-top: 14px; }
-  .distribution-foot { display: none; }
+  .header-inner { gap: 8px; }
+  .brand { font-size: .98rem; gap: 6px; }
+  .brand-mark { width: 26px; height: 26px; font-size: 14px; }
+  .hero { grid-template-columns: minmax(0,1fr); gap: 24px; padding-block: 29px; }
+  .hero-title { font-size: clamp(2.65rem,11vw,4.3rem); }
+  .hero-eyebrow { margin-bottom: 11px; }
+  .hero-lede { margin-top: 13px; }
+  .hero-actions { margin-top: 16px; }
+  .hero-actions .btn { flex: initial; }
+  .signal-card { padding: 14px 16px; }
+  .finder { gap: 8px; }
+  .finder .search-field { flex: 1 1 130px; }
+  .finder .select-wrap { flex: 0 1 auto; }
+  .result-count { margin-left: 0; }
+  .settings-strip,.bench-grid { grid-template-columns: minmax(0,1fr); }
+  .control-deck { gap: 12px; }
+  .segmented button { min-height: 36px; }
+  .chart-row { grid-template-areas: "model score" "track track" "gap gap"; }
+  .chart-scale .scale-right { grid-column: auto; }
+  .kpi-value { white-space: normal; overflow-wrap: anywhere; }
+  .table-wrap .c-model { min-width: 128px; max-width: 145px; white-space: normal; }
 }
-
+@media (max-width: 370px) {
+  .brand-light { display: none; }
+  .header-actions { gap: 4px; }
+  #weight-fields { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  .brand-light { display: none; }
+}
+/* Editorial grid. Cobalt encodes MIX throughout the workspace, vermilion AA. */
+[data-theme="light"] {
+  --bg: #f8f8f5; --panel: #fff; --panel-2: #f1f2ef; --panel-3: #e6e8e4;
+  --ink: #12151a; --ink-2: #353a42; --muted: #535b65; --faint: #627080;
+  --line: #d5d8d7; --line-strong: #9da4aa; --accent: #183fc5; --accent-ink: #fff;
+  --mix: #264fd4; --mix-soft: #e9edfd; --aa-mark: #c04623; --focus: #2049cb;
+  --header-bg: rgb(248 248 245 / .96);
+}
+[data-theme="dark"] {
+  --bg: #11141a; --panel: #191d24; --panel-2: #20252c; --panel-3: #2b3039;
+  --ink: #f3f4f6; --ink-2: #d8dbe3; --muted: #b2bac8; --faint: #9da7b6;
+  --line: #343b47; --line-strong: #697485; --accent: #a1b4ff; --accent-ink: #101625;
+  --mix: #91aaff; --mix-soft: #263351; --aa-mark: #ff966e; --focus: #a1b4ff;
+  --header-bg: rgb(17 20 26 / .96);
+}
+.brand-mark,.hero-eyebrow .live-dot { background: var(--mix); }
+.brand-mark { color: var(--accent-ink); border-radius: 2px; }
+.hero-title .accent { color: var(--mix); }
+.hero-actions .btn,.header-actions .btn,.icon-btn { border-radius: 4px; box-shadow: none; }
+.signal-card { background: #192345; border-color: #192345; border-radius: 2px; box-shadow: none; --line: #465174; --panel-2: #2d395b; --muted: #d1d9ee; --faint: #b8c5e4; }
+.signal-score { color: #fff; }
+.signal-head .live-dot,.profile-bar:nth-child(-n+3) i { background: #b4c4ff; }
+.profile-bar i { background: #7e9aef; border-radius: 0; }
+.profile-bars { background: repeating-linear-gradient(to top,transparent 0 calc(25% - 1px),#394666 calc(25% - 1px) 25%); border-color: #596588; }
+#board,#distribution { border-top: 0; }
+#board .section-head,#distribution .section-head { margin: 0; border-top: 3px solid var(--ink); padding-top: 14px; }
+#board .section-head > div,#distribution .section-head > div { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+#board .kicker,#distribution .kicker { order: 1; font: 600 clamp(.85rem,1.5vw,1.22rem)/1 system-ui,sans-serif; letter-spacing: -.03em; color: var(--ink); }
+#board .kicker::before,#distribution .kicker::before { display: none; }
+#board h2,#distribution h2 { margin: 0; font-size: clamp(2.35rem,4.1vw,4rem); line-height: 1.04; letter-spacing: -.065em; }
+.board { background: transparent; overflow: visible; }
+.board .kpi-grid { margin: 22px 0 18px; border: 0; border-block: 1px solid var(--ink); border-radius: 0; background: transparent; }
+.board .kpi { min-width: 0; padding: 11px 16px 12px; background: transparent; border: 0; border-right: 1px solid var(--line); }
+.board .kpi:first-child { padding-left: 0; }
+.board .kpi:last-child { border: 0; }
+.board .kpi-value { font-size: clamp(1.35rem,2.3vw,2.25rem); font-weight: 650; margin-top: 3px; }
+.board .kpi-sub { margin-top: 4px; }
+.board .kpi-label { letter-spacing: .02em; }
+.work-toolbar { display: flex; align-items: center; gap: 14px; padding-block: 8px; border-bottom: 1px solid var(--ink); }
+#toggle-rail { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line-strong); background: var(--panel); border-radius: 3px; padding: 7px 11px; color: var(--ink); font-size: .87rem; font-weight: 600; cursor: pointer; min-height: 38px; }
+#toggle-rail[aria-expanded="true"] { border-color: var(--ink); }
+#toggle-rail svg { width: 16px; flex: none; }
+.work-toolbar .search-field { width: min(230px,24%); border-radius: 3px; }
+#view-seg { display: flex; gap: 4px; border: 0; padding: 0; margin-left: auto; background: none; border-radius: 0; }
+#view-seg button,#dist-value button { padding: 8px 12px; letter-spacing: 0; border-radius: 2px; }
+#view-seg button[aria-pressed="true"],#dist-value button[aria-pressed="true"] { color: var(--accent-ink); background: var(--accent); box-shadow: none; }
+.work-layout { display: grid; grid-template-columns: clamp(206px,18vw,255px) minmax(0,1fr); border-bottom: 1px solid var(--ink); }
+.work-layout.rail-closed { grid-template-columns: minmax(0,1fr); }
+.board-rail { min-width: 0; border-right: 1px solid var(--line-strong); padding: 17px 16px 18px 0; }
+.lab-select,.board-rail .control-group { display: grid; gap: 6px; min-width: 0; }
+.board-rail .control-label { letter-spacing: .025em; font-size: .82rem; font-weight: 650; color: var(--ink); }
+.board-rail select,.board-sort select,.dist-toolbar select,.pair-choice select { width: 100%; border-radius: 2px; }
+.board-rail .control-deck { display: grid; gap: 17px; padding: 17px 0 0; background: transparent; border: 0; }
+.board-rail .segmented { display: grid; grid-template-columns: 1fr; gap: 2px; width: 100%; padding: 0; border: 0; background: transparent; border-radius: 0; }
+.board-rail #filter-seg { grid-template-columns: 1fr 1fr; }
+.board-rail .segmented button { padding: 5px 8px; min-height: 29px; border: 0; border-left: 2px solid var(--line); background: var(--panel-2); border-radius: 0; color: var(--ink-2); text-align: left; box-shadow: none; font-weight: 500; }
+.board-rail .segmented button[aria-pressed="true"] { border-left-color: var(--mix); color: var(--accent); background: var(--mix-soft); font-weight: 700; }
+.board-rail .segmented button small { float: right; opacity: .78; }
+.board-rail .control-hint { font-size: .77rem; line-height: 1.55; }
+.board-rail #clear-filters { color: var(--accent); padding-left: 0; text-decoration: underline; text-underline-offset: 3px; }
+.board-rail .settings-strip { display: block; padding: 8px 0 0; border: 0; background: none; }
+.board-rail .settings { border: 0; border-top: 1px solid var(--line-strong); border-radius: 0; background: transparent; }
+.board-rail .settings summary { padding: 10px 0; }
+.board-rail .settings-body { padding: 2px 0 14px; }
+.board-rail #weight-fields { grid-template-columns: 1fr; }
+.board-rail .slider-row { grid-template-columns: auto minmax(28px,1fr) 38px; gap: 4px; }
+.board-results { min-width: 0; padding-left: clamp(14px,1.6vw,24px); }
+.board-results-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.board-results-head .result-count { margin: 0; font-weight: 600; }
+.board-sort { display: flex; align-items: center; gap: 7px; }
+.board-sort select { padding-block: 4px; min-height: 30px; }
+.board-results .chart-wrap { padding: 14px 0 8px; border: 0; background: transparent; }
+.board-results .chart-head { align-items: center; margin-bottom: 10px; }
+.board-results .chart-title > span:first-child { letter-spacing: -.025em; }
+.board-results .chart-legend { margin: 0; }
+.chart-legend .legend-bar { background: var(--mix); border-radius: 0; }
+.chart-aa,.legend-aa { border-color: var(--aa-mark); opacity: 1; }
+.chart-aa::after,.legend-aa::after { background: var(--aa-mark); }
+.chart-aa.is-na { display: none; }
+.chart-legend .legend-item:nth-last-child(-n+2) { display: none; }
+.chart-scale,.chart-row { grid-template-columns: minmax(135px,1.13fr) minmax(80px,2.45fr) 54px 70px; gap: 12px; }
+.chart-scale { padding: 4px 6px 9px; }
+.scale-mix { text-align: right; }
+.chart-rows { gap: 0; }
+.chart-row { padding: 7px 6px; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+.chart-row:hover,.chart-row:focus-visible { background: var(--mix-soft); }
+.chart-row.is-ghost { opacity: .86; }
+.chart-model { grid-template-columns: 1.5em 6px minmax(0,1fr); gap: 6px; }
+.chart-position { color: var(--muted); font: .76rem/1 Consolas,monospace; }
+.chart-model .lab-dot { width: 6px; height: 6px; border-radius: 0; box-shadow: none; }
+.chart-model-name { font-weight: 650; }
+.chart-model-sub { letter-spacing: 0; }
+.chart-track { height: 18px; border-radius: 0; background-color: transparent; }
+.chart-bar,.chart-bar.is-fit { top: 3px; bottom: 3px; border-radius: 0; background: var(--mix); }
+.chart-bar::after { opacity: 0; }
+.chart-bar.is-fit::before { background: var(--panel); width: 3px; right: 3px; border-radius: 0; }
+.legend-fit { background: var(--mix); border: 1px solid var(--mix); box-shadow: inset -2px 0 var(--panel); border-radius: 0; }
+#chart-rows.style-lollipop .chart-bar,#chart-rows.style-lollipop .chart-bar::after,#chart-rows.style-tick .chart-bar::after { --lab: var(--mix); }
+.chart-score b { font-size: .95rem; font-weight: 650; }
+.chart-gap { background: none; height: auto; border-radius: 0; text-align: right; }
+.chart-gap::before,.chart-gap .gap-bar { display: none; }
+.chart-gap-label { position: static; font-size: .84rem; font-variant-numeric: tabular-nums; }
+.chart-gap:has(.neg) .chart-gap-label { color: var(--aa-mark); }
+.chart-gap:has(.pos) .chart-gap-label { color: var(--mix); }
+.board-results .table-foot { padding: 12px 0; }
+.board-results .fit-details { margin: 0; border-radius: 0; border-inline: 0; }
+#pair-panel { padding: 16px 0; }
+.pair-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.pair-choice { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 8px; padding: 12px; border-top: 3px solid var(--ink); background: var(--panel-2); }
+.pair-choice.slot-A { color: var(--accent); border-color: var(--mix); background: var(--mix-soft); }
+.pair-choice label,.pair-choice .select-wrap { grid-column: 1/-1; }
+.pair-choice label,.pair-choice small { font-size: .78rem; }
+.pair-choice strong { font-size: clamp(1.6rem,3vw,2.4rem); line-height: 1.2; }
+.pair-metric { display: grid; grid-template-columns: 5em 4.5em minmax(0,1fr) 4.5em; align-items: center; gap: 8px; padding: 9px 6px; border-bottom: 1px solid var(--line); font-size: .85rem; }
+.pair-metric b { font-variant-numeric: tabular-nums; text-align: right; }
+.pair-labels { color: var(--muted); font-size: .77rem; }
+.pair-labels > span:nth-child(3) { text-align: center; }
+.pair-track { position: relative; height: 2px; background: var(--line-strong); margin-inline: 5px; }
+.pair-dot { position: absolute; width: 9px; height: 9px; transform: translate(-50%,-50%); background: var(--ink); top: 1px; }
+.pair-dot.slot-A { background: var(--mix); border-radius: 100%; width: 13px; height: 13px; }
+.pair-note,.pair-empty,.metric-edit-note { padding: 12px 0; font-size: .85rem; color: var(--muted); }
+.dist-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 20px; border-top: 1px solid var(--ink); padding: 10px 0; }
+#dist-value { border: 0; background: none; padding: 0; }
+.atlas { display: grid; grid-template-columns: minmax(155px,.65fr) minmax(0,2.15fr) minmax(225px,1fr); border-block: 1px solid var(--ink); background: var(--panel); }
+.atlas-stat { padding: 21px 17px; background: var(--mix); color: var(--accent-ink); }
+.atlas-stat > span { display: block; font-size: .82rem; }
+.atlas-stat > strong { display: block; font-size: clamp(2.2rem,3.6vw,3.8rem); font-weight: 550; line-height: 1.15; letter-spacing: -.07em; font-variant-numeric: tabular-nums; margin: 8px 0; overflow-wrap: anywhere; }
+#dist-quantiles { margin-top: 20px; }
+#dist-quantiles div { display: flex; justify-content: space-between; gap: 8px; border-top: 1px solid color-mix(in srgb,currentColor 40%,transparent); padding: 5px 0; font-size: .79rem; font-variant-numeric: tabular-nums; }
+.atlas-plot,.atlas-inspector { padding: 18px clamp(12px,1.7vw,24px); min-width: 0; }
+.atlas-inspector { border-left: 1px solid var(--line-strong); background: var(--panel-2); }
+.atlas-plot-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.atlas-plot-head strong { font-size: .94rem; }
+.atlas-plot-head > span { font-size: .77rem; color: var(--muted); }
+#dist-bins { display: grid; grid-template-columns: repeat(var(--bins),minmax(0,1fr)); gap: clamp(2px,.4vw,6px); height: 170px; padding-top: 26px; margin-top: 12px; border-bottom: 1px solid var(--ink); background: repeating-linear-gradient(to top,var(--line) 0 1px,transparent 1px 25%); }
+.bin { display: flex; align-items: flex-end; height: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.bin i { display: block; position: relative; width: 100%; height: max(2px,var(--height)); background: repeating-linear-gradient(to top,transparent 0 calc(100% / var(--layers) - 2px),var(--panel) calc(100% / var(--layers) - 2px) calc(100% / var(--layers))),var(--line-strong); }
+.bin[aria-pressed="true"] i,.bin:hover i { background-color: var(--mix); }
+.bin b { position: absolute; top: -22px; left: 0; right: 0; font: 600 .83rem/1.4 system-ui,sans-serif; color: var(--ink); }
+.bin[aria-pressed="true"] b { color: var(--accent); }
+#dist-axis { display: flex; justify-content: space-between; margin-top: 5px; font: .77rem/1.5 Consolas,monospace; color: var(--muted); }
+.atlas-plot p,.atlas-empty,#dist-members p { color: var(--muted); font-size: .82rem; margin-top: 11px; }
+#dist-interval { margin: 16px 0 10px; font-size: clamp(1.2rem,1.85vw,1.75rem); font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: -.045em; }
+#dist-members { max-height: 18rem; overflow: auto; }
+#dist-members button { display: grid; grid-template-columns: 7px minmax(0,1fr) auto; align-items: center; gap: 8px; width: 100%; padding: 7px 2px; border: 0; border-top: 1px solid var(--line); background: none; text-align: left; font-size: .84rem; cursor: pointer; }
+#dist-members button:hover,#dist-members button:focus-visible { background: var(--mix-soft); }
+#dist-members b { color: var(--accent); font-variant-numeric: tabular-nums; }
+@media(max-width:1050px) {
+  .atlas { grid-template-columns: minmax(128px,.6fr) minmax(0,1.65fr) minmax(172px,.9fr); }
+  .board-results .chart-head { align-items: flex-start; flex-direction: column; gap: 4px; }
+}
+@media(max-width:880px) {
+  .work-layout { grid-template-columns: minmax(0,1fr); }
+  .board-rail { padding: 15px; border: 0; border-bottom: 1px solid var(--line-strong); background: var(--panel-2); }
+  .board-rail .control-deck { grid-template-columns: repeat(auto-fit,minmax(155px,1fr)); }
+  .board-rail .control-hint { grid-column: 1/-1; }
+  .board-rail .settings-strip { display: grid; grid-template-columns: 1fr 1fr; }
+  .board-rail #weight-fields { grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); }
+  .board-results { padding-left: 0; }
+  .work-toolbar { flex-wrap: wrap; }
+  .atlas { grid-template-columns: 150px minmax(0,1fr); }
+  .atlas-inspector { grid-column: 1/-1; border: 0; border-top: 1px solid var(--line); }
+}
+@media(max-width:720px) {
+  #board .section-head,#distribution .section-head { padding-top: 9px; }
+  #board .kicker,#distribution .kicker { font-size: .78rem; }
+  .board .kpi-grid { grid-template-columns: repeat(2,minmax(0,1fr)); margin: 14px 0 6px; }
+  .board .kpi { padding: 8px; }
+  .board .kpi:nth-child(odd) { padding-left: 0; }
+  .board .kpi:nth-child(even) { border-right: 0; }
+  .board .kpi:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .board .kpi-value { font-size: 1.35rem; }
+  .board .kpi-sub { font-size: .75rem; }
+  .work-toolbar { gap: 6px; }
+  .work-toolbar .search-field { flex: 1; width: auto; }
+  #view-seg { width: 100%; margin-left: 0; }
+  #view-seg button { flex: 1; min-height: 35px; padding: 4px; }
+  .board-rail .settings-strip { grid-template-columns: minmax(0,1fr); }
+  .board-sort .control-label { display: none; }
+  .board-results .chart-head,.board-results .chart-tools { gap: 6px; }
+  .chart-row { grid-template-columns: minmax(0,1fr) 50px 62px; grid-template-areas: "model score gap" "track track track"; gap: 2px 8px; padding: 7px 2px; }
+  .chart-model { grid-column: auto; }
+  .chart-score,.chart-gap { grid-column: auto; height: auto; }
+  .chart-track { grid-column: 1/-1; height: 14px; margin: 4px 0 0; }
+  .chart-aa { top: -1px; bottom: 0; }
+  .chart-aa::after { top: -2px; }
+  .pair-choices { gap: 6px; }
+  .pair-choice { padding: 8px; min-width: 0; }
+  .pair-choice select { min-width: 0; font-size: .8rem; padding-left: 4px; }
+  .pair-metric { grid-template-columns: 4.2em 3.7em minmax(0,1fr) 3.7em; gap: 4px; }
+  .dist-toolbar { margin-top: 14px; }
+  #dist-value { width: auto; }
+  #dist-value button { padding: 6px; }
+  .atlas { grid-template-columns: minmax(0,1fr); }
+  .atlas-stat { display: grid; grid-template-columns: minmax(0,1fr) 1.25fr; column-gap: 12px; padding: 14px; }
+  .atlas-stat > strong { margin: 0; }
+  #dist-quantiles { grid-column: 2; grid-row: 1/4; margin: 0; }
+  #dist-quantiles div { padding: 2px 0; }
+  .atlas-inspector { grid-column: auto; }
+  #dist-bins { height: 148px; }
+  .atlas-plot,.atlas-inspector { padding: 14px; }
+}
   </style>
   <noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
 </head>
@@ -2787,9 +2960,8 @@ code {
 <header class="site-header">
   <div class="header-inner">
     <a class="brand" href="#top" aria-label="回到顶部" data-i18n-attr="aria-label:header.top">
-      <span class="brand-mark" aria-hidden="true"></span>
-      <span>Mixture Index</span>
-      <small>CODING · v1.0</small>
+      <span class="brand-mark" aria-hidden="true">21</span>
+      <span>BenchMix<span class="brand-light"> Index</span></span>
     </a>
 
     <nav class="main-nav" aria-label="主导航" data-i18n-attr="aria-label:nav.label">
@@ -2797,6 +2969,7 @@ code {
       <a href="#distribution" data-i18n="nav.distribution">分布</a>
       <a href="#readout" data-i18n="nav.readout">读法</a>
       <a href="#method" data-i18n="nav.method">方法</a>
+      <a href="#benchmarks">Benchmark</a>
       <a href="#cost" data-i18n="nav.cost">成本</a>
     </nav>
 
@@ -2824,6 +2997,7 @@ code {
     <a href="#distribution" data-i18n="nav.distribution">分布</a>
     <a href="#readout" data-i18n="nav.readout">读法</a>
     <a href="#method" data-i18n="nav.method">方法</a>
+      <a href="#benchmarks">Benchmark</a>
     <a href="#cost" data-i18n="nav.cost">成本</a>
   </nav>
 </header>
@@ -2836,23 +3010,15 @@ code {
     <div class="hero-copy">
       <div class="hero-eyebrow reveal">
         <span class="live-dot" aria-hidden="true"></span>
-        AA Intelligence Index v5.0.1 · <span data-release-date>26/11/20</span>
+        <span data-i18n="hero.snapshot">数据快照</span><span data-release-date>26/11/20</span>
       </div>
 
       <h1 class="hero-title reveal" id="hero-title" style="--delay: 40ms">
         <span data-i18n="hero.t1">编码模型</span>
-        <span><span class="accent" data-i18n="hero.t2a">混合</span><span data-i18n="hero.t2b">指数</span><sup>v1.0</sup></span>
+        <span><span class="accent" data-i18n="hero.t2a">混合</span><span data-i18n="hero.t2b">指数</span></span>
       </h1>
 
-      <p class="hero-lede reveal" style="--delay: 90ms" data-i18n="hero.lede">
-        我对模型的评价，高度拟合 Artificial Analysis Coding Agent Benchmarks（即 FrontierCode-AA 2.0 +
-        Terminal-Bench 4.1 + SWE-Atlas-QnA-AA 三者的平均数）结合 VALS 榜单的一种复杂变体。
-      </p>
-      <p class="hero-sub reveal" style="--delay: 120ms" data-i18n="hero.sub">
-        这个新参数以更高的区分度，为优质指标或符合真实任务的 Benchmark 赋予更多影响因子，
-        用来区分能把事情做对、能把事情做完，和无法完成任务的模型。
-      </p>
-
+      <p class="hero-lede reveal" style="--delay: 90ms" data-i18n="hero.lede">比较八项编码评测的综合表现，查看模型分数里有多少实测、多少拟合。调整权重，可以试算适合自己开发任务的指数。</p>
       <div class="hero-actions reveal" style="--delay: 150ms">
         <a class="btn btn-primary" href="#board" data-i18n="hero.ctaBoard">
           查看实时指数
@@ -2862,28 +3028,24 @@ code {
         <button class="btn btn-quiet" id="btn-copy-citation" type="button" title="复制引用" data-i18n-attr="title:hero.copyTitle" data-i18n="hero.copy">复制引用</button>
       </div>
 
-      <div class="hero-meta reveal" style="--delay: 180ms">
-        <span><span data-i18n="hero.metaData">数据版本</span> <b class="mono" data-release-date>26/11/20</b></span>
-        <span class="divider-dot" aria-hidden="true"></span>
-        <span><span data-i18n="hero.metaMain">主表</span> <b class="mono" id="hero-strict-count">14</b> / 25</span>
-        <span class="divider-dot" aria-hidden="true"></span>
-        <span><span data-i18n="hero.metaLicense">许可</span> <b class="mono">CC BY-NC-SA 4.0</b></span>
-      </div>
-
-      <div class="hero-stats reveal" style="--delay: 210ms" aria-label="页面概况">
-        <div class="hero-stat"><strong data-countup="25">25</strong><span data-i18n="hero.statModels">候选模型</span></div>
-        <div class="hero-stat"><strong data-countup="8">8</strong><span data-i18n="hero.statMetrics">分项指标</span></div>
-        <div class="hero-stat"><strong data-countup="0">0</strong><span data-i18n="hero.statDeps">外部依赖</span></div>
-        <div class="hero-stat"><strong data-countup="100" data-suffix="%">100%</strong><span data-i18n="hero.statRepro">可复算</span></div>
+      <div class="hero-meta">
+        <span><b id="hero-total-count">25</b> <span data-i18n="hero.statModels">候选模型</span></span>
+        <span><b>8</b> <span data-i18n="hero.statMetrics">分项指标</span></span>
+        <span><b id="hero-strict-count">14</b> <span data-i18n="hero.metaMain">主表</span></span>
       </div>
     </div>
 
-    <aside class="signal-card reveal" style="--delay: 140ms" aria-label="当前前三名" data-i18n-attr="aria-label:signal.label">
+    <aside class="signal-card reveal" style="--delay: 140ms" aria-label="指数剖面" data-i18n-attr="aria-label:profile.title">
       <div class="signal-head">
         <span class="live-dot" aria-hidden="true"></span>
-        <span>Live top 3</span>
+        <span data-i18n="profile.title">指数剖面</span>
         <span class="mono" id="signal-anchor">FABLE = 1.000</span>
       </div>
+      <div class="profile-plot">
+        <div class="profile-axis" aria-hidden="true"><span id="profile-max"></span><span>0</span></div>
+        <div id="profile-bars" class="profile-bars" role="group" data-i18n-attr="aria-label:profile.bars" aria-label="当前模型按混合指数降序排列"></div>
+      </div>
+      <div class="profile-caption"><span data-i18n="profile.leaders">指数前三</span><span>MIX</span></div>
       <div class="signal-list" id="signal-list">
         <div class="signal-row">
           <span class="signal-rank">01</span>
@@ -2894,90 +3056,10 @@ code {
         </div>
       </div>
       <div class="signal-foot">
-        <span><span data-i18n="signal.anchor">锚点</span> <strong>Claude Fable 5.2</strong></span>
+        <span id="profile-sample"></span>
         <span id="signal-spread">极差 —</span>
       </div>
     </aside>
-  </section>
-
-  <!-- Ticker -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span class="ticker-item">FrontierCode-AA 2.0</span>
-      <span class="ticker-item">Terminal-Bench 4.1</span>
-      <span class="ticker-item">SWE-Atlas-QnA-AA</span>
-      <span class="ticker-item">CursorBench 4.1</span>
-      <span class="ticker-item">VCB 1-100 v1.1</span>
-      <span class="ticker-item">Vibe Code Bench v1.1</span>
-      <span class="ticker-item">FrontierSWE v2</span>
-      <span class="ticker-item">VALS ProgramBench Accuracy</span>
-      <span class="ticker-item">AA Intelligence Index v5.0.1</span>
-      <span class="ticker-item">Right / Work / Risk / Fail / Lab</span>
-      <span class="ticker-item">FrontierCode-AA 2.0</span>
-      <span class="ticker-item">Terminal-Bench 4.1</span>
-      <span class="ticker-item">SWE-Atlas-QnA-AA</span>
-      <span class="ticker-item">CursorBench 4.1</span>
-      <span class="ticker-item">VCB 1-100 v1.1</span>
-      <span class="ticker-item">Vibe Code Bench v1.1</span>
-      <span class="ticker-item">FrontierSWE v2</span>
-      <span class="ticker-item">VALS ProgramBench Accuracy</span>
-      <span class="ticker-item">AA Intelligence Index v5.0.1</span>
-      <span class="ticker-item">Right / Work / Risk / Fail / Lab</span>
-    </div>
-  </div>
-
-  <!-- ======================================================================
-       Preface
-       ====================================================================== -->
-  <section class="section" id="preface" aria-labelledby="preface-title">
-    <div class="section-head reveal">
-      <div>
-        <div class="kicker">00 / WHY</div>
-        <h2 id="preface-title" data-i18n="preface.title">为什么做一个指数</h2>
-      </div></div>
-
-    <div class="preface-grid">
-      <div class="prose reveal" style="--delay: 50ms">
-        <p data-i18n="preface.p1">
-          我之前在 Bilibili 更新了不少国模模型评测视频，但现在我一边不断完善个人的开发工作流（并将其直接编入 GitHub 仓库之后），
-          我在测试用的大型仓库中的经验突然让我想到：我对模型的评价高度拟合 Artificial Analysis Coding Agent Benchmarks
-          （即 FrontierCode-AA 2.0 + Terminal-Bench 4.1 + SWE-Atlas-QnA-AA 三者的平均数）结合 VALS 的榜单的一种复杂变体。
-        </p>
-        <p data-i18n="preface.p2">
-          但榜太多就导致了很多模型没成绩，以及很难调基于 VCB 和 PB 加权惩罚系数。如果没有 CursorBench 就提高
-          FrontierCode / Terminal-Bench 4.1 / FrontierSWE 各自 10% / 5% / 5%，没有 ProgramBench 就按最近地底分拟合。
-        </p>
-        <p data-i18n="preface.p3">
-          AA Intelligence Index v5.0.1 的区分度不够，这个新的参数以更高的区分度（如果差别不够高就用当前最高分放大为 1
-          然后算相对分）、为优质指标或符合真实任务的 Benchmark 赋予更多的影响因子，来更直观地区分能把事情做对（Right）的分高模型，
-          把事情做完（Work）的一般模型，和无法完成任务的差模型。
-        </p>
-      </div>
-
-      <aside class="formula-card reveal" style="--delay: 120ms" aria-label="公式概览">
-        <h3>Index anatomy</h3>
-        <div class="formula-line">
-          <span class="formula-key">BASE</span>
-          <span class="formula-val">0.35·FC + 0.20·CB + 0.15·SWE + 0.15·TB<br>+ 0.10·VCB100 + 0.05·FSWE</span>
-        </div>
-        <div class="formula-line">
-          <span class="formula-key">MULT</span>
-          <span class="formula-val"><b>0.8 + 0.1·VCB + 1.0·PB</b></span>
-        </div>
-        <div class="formula-line">
-          <span class="formula-key">RAW</span>
-          <span class="formula-val">BASE × MULT</span>
-        </div>
-        <div class="formula-line">
-          <span class="formula-key">ANCHOR</span>
-          <span class="formula-val">Fable 5.2 = 1.000 <span class="dim" data-i18n="formula.orMax">（或当前最高 = 1）</span></span>
-        </div>
-        <div class="formula-note" data-i18n-html="formula.note">
-          缺 CB 时：FC +10%、TB +5%、FSWE +5%，重新配平到 1.00。<br>
-          缺 PB 时：按最近地底分拟合。所有分项先归一到 0–1，百分制在页面内统一除以 100。
-        </div>
-      </aside>
-    </div>
   </section>
 
   <!-- ======================================================================
@@ -2986,12 +3068,46 @@ code {
   <section class="section" id="board" aria-labelledby="board-title">
     <div class="section-head reveal">
       <div>
-        <div class="kicker">01 / LIVE BOARD</div>
+        <div class="kicker" aria-hidden="true">LIVE BOARD</div>
         <h2 id="board-title" data-i18n="board.title">实时混合指数</h2>
       </div></div>
 
-    <div class="panel board reveal" style="--delay: 60ms">
-      <div class="control-deck">
+    <div class="board reveal">
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-label"><span data-i18n="kpi.top">当前最高</span> <i>TOP</i></div>
+          <div class="kpi-value" id="kpi-top-name">—</div>
+          <div class="kpi-sub" id="kpi-top-sub">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label"><span data-i18n="kpi.median">中位分</span> <i>MEDIAN</i></div>
+          <div class="kpi-value" id="kpi-median">—</div>
+          <div class="kpi-sub" id="kpi-median-sub">当前筛选</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label"><span data-i18n="kpi.range">指数极差</span> <i>SPREAD</i></div>
+          <div class="kpi-value" id="kpi-range">—</div>
+          <div class="kpi-sub" id="kpi-range-sub">对比 AA 极差</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label"><span data-i18n="kpi.gap">最大 AA 偏离</span> <i>Δ</i></div>
+          <div class="kpi-value" id="kpi-gap-value">—</div>
+          <div class="kpi-sub" id="kpi-gap-sub">同锚点缩放</div>
+        </div>
+      </div>
+      <div class="work-toolbar">
+        <button type="button" id="toggle-rail" aria-controls="board-rail" aria-expanded="true"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h18M3 17h18"/><path d="M8 4v6m8 4v6" stroke-width="3"/></svg><span data-i18n="rail.title">筛选与设置</span></button>
+        <label class="search-field"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="model-search" type="search" data-i18n-attr="placeholder:find.search;aria-label:find.search" placeholder="搜索模型名称" aria-label="搜索模型名称"></label>
+        <div class="segmented" id="view-seg" role="group" data-i18n-attr="aria-label:view.title">
+        <button type="button" data-view="chart" aria-pressed="true" data-i18n="view.chart">指数对照图</button>
+        <button type="button" data-view="table" aria-pressed="false" data-i18n="view.table">分项数据表</button>
+        <button type="button" data-view="compare" aria-pressed="false" data-i18n="pair.title">双模型对比</button>
+        </div>
+      </div>
+      <div class="work-layout">
+        <aside class="board-rail" id="board-rail">
+          <div class="lab-select"><label class="control-label" for="lab-filter" data-i18n="find.lab">实验室</label><div class="select-wrap"><select id="lab-filter" data-i18n-attr="aria-label:find.lab" aria-label="实验室"><option value="" data-i18n="find.allLabs">全部实验室</option></select></div></div>
+          <div class="control-deck">
         <div class="control-group">
           <div class="control-label"><span data-i18n="controls.range">模型范围</span> <span title="缺分按 8 项原始数据计数；CB 缺测按公式回退，不额外插补。" data-i18n-attr="title:controls.rangeTip">?</span></div>
           <div class="segmented" id="filter-seg" role="group" aria-label="模型范围">
@@ -3020,19 +3136,18 @@ code {
           </div>
         </div>
 
-        <div class="control-group" style="margin-left:auto">
-          <div class="control-label" data-i18n="controls.sort">排序</div>
-          <div class="select-wrap">
-            <select id="sort-select" aria-label="排序方式" data-i18n-attr="aria-label:controls.sort">
-              <option value="score" data-i18n="sort.score">混合指数</option>
-              <option value="aa">AA Intelligence</option>
-              <option value="gap" data-i18n="sort.gap">AA 缺口（正）</option>
-              <option value="gapAbs" data-i18n="sort.gapAbs">AA 缺口（绝对值）</option>
-              <option value="missing" data-i18n="sort.missing">缺分最少</option>
-            </select>
-          </div>
+        <div class="control-hint" id="control-hint" aria-live="polite">
+          当前：主表 ≤2 缺分 · Fable 锚定 · 推荐拟合。点击行可修改任意分项。
         </div>
-
+      </div>
+          <button id="clear-filters" type="button" class="btn btn-quiet" data-i18n="find.clear" hidden>清除筛选</button>
+          <div class="settings-strip">
+        <details class="settings" id="weight-settings"><summary><span data-i18n="weights.title">调整计分系数</span> <small id="weight-status"></small></summary>
+          <div class="settings-body"><p data-i18n="weights.help"></p><div id="weight-fields"></div>
+          <div class="weight-footer"><output id="weight-sum"></output><button class="btn btn-ghost" type="button" id="weight-default" data-i18n="weights.reset">恢复原版系数</button></div>
+          <div class="active-equation" id="active-equation"></div></div>
+        </details>
+        <details class="settings" id="display-settings"><summary data-i18n="display.title">显示设置</summary><div class="settings-body display-fields">
         <div class="control-group">
           <div class="control-label"><span data-i18n="controls.font">字体</span></div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -3050,7 +3165,7 @@ code {
                 <option value="cascadia">Cascadia Code</option>
               </select>
             </div>
-            <button class="btn btn-quiet" id="btn-scan-fonts" type="button" style="display:none;padding:6px 8px;font-size:9px" data-i18n="fonts.scan">检测本机字体</button>
+            <button class="btn btn-quiet" id="btn-scan-fonts" type="button" style="display:none" data-i18n="fonts.scan">检测本机字体</button>
           </div>
           <div class="slider-row">
             <span class="slider-label" data-i18n="controls.size">字号</span>
@@ -3073,34 +3188,25 @@ code {
           </div>
         </div>
 
-        <div class="control-hint" id="control-hint" aria-live="polite">
-          当前：主表 ≤2 缺分 · Fable 锚定 · 推荐拟合。点击行可修改任意分项。
-        </div>
+          <label class="snapshot-field"><span data-i18n="scenario.date">个人试算日期（可选）</span><input type="date" id="scenario-date" min="0001-01-01" max="9999-12-31"></label>
+        </div></details>
       </div>
+        </aside>
+        <div class="board-results"><div class="board-results-head"><span class="result-count" id="result-count" role="status"></span>        <div class="board-sort">
+          <div class="control-label" data-i18n="controls.sort">排序</div>
+          <div class="select-wrap">
+            <select id="sort-select" aria-label="排序方式" data-i18n-attr="aria-label:controls.sort">
+              <option value="score" data-i18n="sort.score">混合指数</option>
+              <option value="aa">AA Intelligence</option>
+              <option value="gap" data-i18n="sort.gap">AA 缺口（正）</option>
+              <option value="gapAbs" data-i18n="sort.gapAbs">AA 缺口（绝对值）</option>
+              <option value="missing" data-i18n="sort.missing">缺分最少</option>
+            </select>
+          </div>
+        </div>
 
-      <div class="kpi-grid">
-        <div class="kpi">
-          <div class="kpi-label"><span data-i18n="kpi.top">当前最高</span> <i>TOP</i></div>
-          <div class="kpi-value" id="kpi-top-name">—</div>
-          <div class="kpi-sub" id="kpi-top-sub">—</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label"><span data-i18n="kpi.median">中位分</span> <i>MEDIAN</i></div>
-          <div class="kpi-value" id="kpi-median">—</div>
-          <div class="kpi-sub" id="kpi-median-sub">当前筛选</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label"><span data-i18n="kpi.range">指数极差</span> <i>SPREAD</i></div>
-          <div class="kpi-value" id="kpi-range">—</div>
-          <div class="kpi-sub" id="kpi-range-sub">对比 AA 极差</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label"><span data-i18n="kpi.gap">最大 AA 偏离</span> <i>Δ</i></div>
-          <div class="kpi-value" id="kpi-gap-value">—</div>
-          <div class="kpi-sub" id="kpi-gap-sub">同锚点缩放</div>
-        </div>
-      </div>
-
+</div>
+        <div id="pair-panel" hidden></div>
       <div class="chart-wrap" id="chart-wrap">
         <div class="chart-head">
           <div class="chart-title">
@@ -3121,7 +3227,7 @@ code {
         <div class="chart-scale" aria-hidden="true">
           <span>Model</span>
           <div class="scale-mid" id="chart-scale-ticks"></div>
-          <span class="scale-right">Δ AA (pt)</span>
+          <span class="scale-mix">MIX</span><span class="scale-right">Δ AA (pt)</span>
         </div>
 
         <div class="chart-rows" id="chart-rows" role="list" aria-label="模型指数对比图"></div>
@@ -3133,7 +3239,8 @@ code {
         </div>
       </div>
 
-      <div class="table-wrap">
+      <div id="table-edit-hint" class="metric-edit-note" data-i18n="view.tableHint" hidden>点数值编辑百分比，点模型看完整拆解</div>
+      <div class="table-wrap" id="metric-table" hidden>
         <table aria-label="编码模型混合指数表">
           <thead>
             <tr>
@@ -3148,14 +3255,14 @@ code {
               <th scope="col" class="center" data-th="missing">
                 <button class="th-sort" type="button" data-sort="missing"><span data-i18n="th.missing">缺分</span> <span class="arrow">↕</span></button>
               </th>
-              <th scope="col" class="num group-core" title="FrontierCode-AA 2.0 · 权重 0.35" data-i18n-attr="title:th.w.fc">FC 2.0</th>
-              <th scope="col" class="num group-core" title="CursorBench 4.1 · 权重 0.20；缺失时公式回退" data-i18n-attr="title:th.w.cb">CB 4.1</th>
-              <th scope="col" class="num group-core" title="SWE-Atlas-QnA-AA · 权重 0.15" data-i18n-attr="title:th.w.swe">SWE-A</th>
-              <th scope="col" class="num group-core" title="Terminal-Bench 4.1 · 权重 0.15" data-i18n-attr="title:th.w.tb">TB 4.1</th>
-              <th scope="col" class="num group-core" title="VCB 1-100 v1.1 · 权重 0.10" data-i18n-attr="title:th.w.vcb100">VCB100</th>
-              <th scope="col" class="num group-core" title="FrontierSWE v2 · 权重 0.05" data-i18n-attr="title:th.w.fswe">FSWE2</th>
-              <th scope="col" class="num group-mult" title="Vibe Code Bench v1.1 · 乘数 0.8 + 0.1×VCB" data-i18n-attr="title:th.w.vcb">VCB 1.1</th>
-              <th scope="col" class="num group-mult" title="VALS ProgramBench Accuracy · 乘数 +1.0×PB" data-i18n-attr="title:th.w.pb">PB Full</th>
+              <th scope="col" class="num group-core" title="FrontierCode-AA 2.0 · 权重 0.35" data-i18n-attr="title:th.w.fc"><a href="#guide-fc">FC 2.0</a></th>
+              <th scope="col" class="num group-core" title="CursorBench 4.1 · 权重 0.20；缺失时公式回退" data-i18n-attr="title:th.w.cb"><a href="#guide-cb">CB 4.1</a></th>
+              <th scope="col" class="num group-core" title="SWE-Atlas-QnA-AA · 权重 0.15" data-i18n-attr="title:th.w.swe"><a href="#guide-fc">SWE-A</a></th>
+              <th scope="col" class="num group-core" title="Terminal-Bench 4.1 · 权重 0.15" data-i18n-attr="title:th.w.tb"><a href="#guide-tb">TB 4.1</a></th>
+              <th scope="col" class="num group-core" title="VCB 1-100 v1.1 · 权重 0.10" data-i18n-attr="title:th.w.vcb100"><a href="#guide-vcb100">VCB100</a></th>
+              <th scope="col" class="num group-core" title="FrontierSWE v2 · 权重 0.05" data-i18n-attr="title:th.w.fswe"><a href="#guide-fswe">FSWE2</a></th>
+              <th scope="col" class="num group-mult" title="Vibe Code Bench v1.1 · 乘数 0.8 + 0.1×VCB" data-i18n-attr="title:th.w.vcb"><a href="#guide-vcb">VCB 1.1</a></th>
+              <th scope="col" class="num group-mult" title="VALS ProgramBench Accuracy · 乘数 +1.0×PB" data-i18n-attr="title:th.w.pb"><a href="#guide-pb">PB Full</a></th>
               <th scope="col" class="num group-core" title="线性加权基础分" data-i18n="th.base" data-i18n-attr="title:th.baseTip">基础</th>
               <th scope="col" class="num group-mult" title="0.8 + 0.1×VCB + 1.0×PB" data-i18n="th.mult">乘数</th>
             </tr>
@@ -3165,9 +3272,11 @@ code {
       </div>
 
       <div class="table-foot">
-        <div class="table-legend">
+        <div class="table-legend" id="table-legend" hidden>
           <span><i aria-hidden="true"></i><span data-i18n="legend.measured">实测</span></span>
           <span><i class="fit" aria-hidden="true"></i><span data-i18n="legend.fitted">拟合 ≈</span></span>
+          <span><i class="manual"></i><span data-i18n="status.manual">手动改分</span></span>
+          <span><i class="filled"></i><span data-i18n="status.filled">自行补分</span></span>
           <span><i class="fallback" aria-hidden="true"></i><span data-i18n="legend.fallback">CB 回退 / 未填</span></span>
         </div>
         <div class="table-actions">
@@ -3190,6 +3299,9 @@ code {
           </table>
         </div>
       </details>
+
+        </div>
+      </div>
     </div>
   </section>
 
@@ -3199,18 +3311,28 @@ code {
   <section class="section" id="distribution" aria-labelledby="distribution-title">
     <div class="section-head reveal">
       <div>
-        <div class="kicker">02 / DISTRIBUTION</div>
+        <div class="kicker" aria-hidden="true">DISTRIBUTION</div>
         <h2 id="distribution-title" data-i18n="dist.title">实际分布</h2>
       </div></div>
 
-    <div class="panel distribution-panel reveal">
-      <div class="distribution-head">
-        <div class="chart-title"><span data-i18n="dist.heading">MIX 分布</span> <span id="distribution-sub">—</span></div>
-        <div class="distribution-quantiles" id="distribution-quantiles"></div>
+    <div class="dist-toolbar">
+      <div class="segmented" id="dist-value" role="group" data-i18n-attr="aria-label:dist.measure">
+        <button type="button" data-dist-value="mix" aria-pressed="true" data-i18n="sort.score">混合指数</button>
+        <button type="button" data-dist-value="gap" aria-pressed="false">Δ AA (pt)</button>
       </div>
-      <div class="distribution-track" id="distribution-track"></div>
-      <div class="distribution-axis" id="distribution-axis" aria-hidden="true"></div>
-      <div class="distribution-foot" data-i18n="dist.foot">悬停查看 · 点击编辑</div>
+      <div class="select-wrap"><select id="dist-scope" data-i18n-attr="aria-label:dist.scope">
+        <option value="all" data-i18n="dist.all">全部候选模型</option><option value="visible" data-i18n="dist.visible">跟随主表筛选</option>
+      </select></div>
+    </div>
+    <div class="atlas">
+      <div class="atlas-stat"><span data-i18n="kpi.median">中位分</span><strong id="dist-median">—</strong><span id="dist-sub"></span><div id="dist-quantiles"></div></div>
+      <div class="atlas-plot"><div class="atlas-plot-head"><strong data-i18n="dist.frequency">各区间模型数</strong><span id="dist-unit">MIX</span></div>
+        <div id="dist-bins" role="group" data-i18n-attr="aria-label:dist.bins"></div>
+        <div id="dist-axis" aria-hidden="true"></div><p data-i18n="dist.selectBin">选择分数区间，查看落在其中的模型。</p>
+      </div>
+      <div class="atlas-inspector"><div class="atlas-plot-head"><strong data-i18n="dist.inBin">区间内的模型</strong><span id="dist-bin-count"></span></div>
+        <div id="dist-interval" aria-live="polite"></div><div id="dist-members"></div>
+      </div>
     </div>
   </section>
 
@@ -3220,7 +3342,7 @@ code {
   <section class="section" id="readout" aria-labelledby="readout-title">
     <div class="section-head reveal">
       <div>
-        <div class="kicker">03 / READOUT</div>
+        <div class="kicker" aria-hidden="true">READOUT</div>
         <h2 id="readout-title" data-i18n="readout.title">同级别的模型，也有明显的体感差异</h2>
       </div></div>
 
@@ -3253,18 +3375,72 @@ code {
   </section>
 
   <!-- ======================================================================
+       Preface
+       ====================================================================== -->
+  <section class="section" id="preface" aria-labelledby="preface-title">
+    <div class="section-head reveal">
+      <div>
+        <div class="kicker" aria-hidden="true">WHY</div>
+        <h2 id="preface-title" data-i18n="preface.title">为什么做一个指数</h2>
+      </div></div>
+
+    <div class="preface-grid">
+      <div class="prose reveal" style="--delay: 50ms">
+        <p data-i18n="preface.p1">
+          我之前在 Bilibili 更新了不少国模模型评测视频，但现在我一边不断完善个人的开发工作流（并将其直接编入 GitHub 仓库之后），
+          我在测试用的大型仓库中的经验突然让我想到：我对模型的评价高度拟合 Artificial Analysis Coding Agent Benchmarks
+          （即 FrontierCode-AA 2.0 + Terminal-Bench 4.1 + SWE-Atlas-QnA-AA 三者的平均数）结合 VALS 的榜单的一种复杂变体。
+        </p>
+        <p data-i18n="preface.p2">
+          但榜太多就导致了很多模型没成绩，以及很难调基于 VCB 和 PB 加权惩罚系数。如果没有 CursorBench 就提高
+          FrontierCode / Terminal-Bench 4.1 / FrontierSWE 各自 10% / 5% / 5%，没有 ProgramBench 就按最近地底分拟合。
+        </p>
+        <p data-i18n="preface.p3">
+          AA Intelligence Index v5.0.1 的区分度不够，这个新的参数以更高的区分度（如果差别不够高就用当前最高分放大为 1
+          然后算相对分）、为优质指标或符合真实任务的 Benchmark 赋予更多的影响因子，来更直观地区分能把事情做对（Right）的分高模型，
+          把事情做完（Work）的一般模型，和无法完成任务的差模型。
+        </p>
+      </div>
+
+      <aside class="formula-card reveal" style="--delay: 120ms" aria-label="公式概览">
+        <h3 data-i18n="weights.original">原版计分公式</h3>
+        <div class="formula-line">
+          <span class="formula-key">BASE</span>
+          <span class="formula-val">0.35·FC + 0.20·CB + 0.15·SWE + 0.15·TB<br>+ 0.10·VCB100 + 0.05·FSWE</span>
+        </div>
+        <div class="formula-line">
+          <span class="formula-key">MULT</span>
+          <span class="formula-val"><b>0.8 + 0.1·VCB + 1.0·PB</b></span>
+        </div>
+        <div class="formula-line">
+          <span class="formula-key">RAW</span>
+          <span class="formula-val">BASE × MULT</span>
+        </div>
+        <div class="formula-line">
+          <span class="formula-key">ANCHOR</span>
+          <span class="formula-val">Fable 5.2 = 1.000 <span class="dim" data-i18n="formula.orMax">（或当前最高 = 1）</span></span>
+        </div>
+        <div class="formula-note" data-i18n-html="formula.note">
+          缺 CB 时：FC +10%、TB +5%、FSWE +5%，重新配平到 1.00。<br>
+          缺 PB 时：按最近地底分拟合。所有分项先归一到 0–1，百分制在页面内统一除以 100。
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ======================================================================
        Method
        ====================================================================== -->
   <section class="section" id="method" aria-labelledby="method-title">
     <div class="section-head reveal">
       <div>
-        <div class="kicker">04 / METHOD</div>
+        <div class="kicker" aria-hidden="true">METHOD</div>
         <h2 id="method-title" data-i18n="method.title">公式、回退与对照</h2>
       </div></div>
 
     <div class="method-grid">
       <div class="method-card reveal">
-        <h3><span data-i18n="method.core">核心公式</span> <span>0–1 scale</span></h3>
+        <h3><span data-i18n="weights.original">原版计分公式</span> <span>0–1 scale</span></h3>
         <div class="eq">
           <b>BASE</b> <span class="op">=</span> 0.35·FC <span class="op">+</span> 0.20·CB <span class="op">+</span> 0.15·SWE<br>
           <span class="eq-sub"><span class="op">+</span> 0.15·TB <span class="op">+</span> 0.10·VCB100 <span class="op">+</span> 0.05·FSWE</span>
@@ -3324,48 +3500,12 @@ code {
       </div>
     </div>
 
-    <div class="source-grid">
-      <a class="source-card reveal" href="https://artificialanalysis.ai/agents/coding-agents" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">AA · v2.1</span>
-        <span class="src-name">Coding Agent Index</span>
-        <span class="src-link">artificialanalysis.ai ↗</span>
-      </a>
-      <a class="source-card reveal" href="https://artificialanalysis.ai/leaderboards/models" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">AA · v5.0.1</span>
-        <span class="src-name">Intelligence Index</span>
-        <span class="src-link">artificialanalysis.ai ↗</span>
-      </a>
-      <a class="source-card reveal" href="https://www.vals.ai/benchmarks/vcb-1-100-v1-1" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">VALS · v1.1</span>
-        <span class="src-name">VCB 1-100</span>
-        <span class="src-link">vals.ai ↗</span>
-      </a>
-      <a class="source-card reveal" href="https://www.vals.ai/benchmarks/vibe-code" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">VALS · v1.1</span>
-        <span class="src-name">Vibe Code Bench</span>
-        <span class="src-link">vals.ai ↗</span>
-      </a>
-      <a class="source-card reveal" href="https://cursor.com/cursorbench" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">Cursor · 4.1</span>
-        <span class="src-name">CursorBench</span>
-        <span class="src-link">cursor.com ↗</span>
-      </a>
-      <a class="source-card reveal" href="https://www.frontierswe.com/" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">FrontierSWE · v2</span>
-        <span class="src-name">FrontierSWE</span>
-        <span class="src-link">frontierswe.com ↗</span>
-      </a>
-      <a class="source-card reveal" href="https://www.vals.ai/benchmarks/programbench" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">VALS · ProgramBench</span>
-        <span class="src-name">ProgramBench</span>
-        <span class="src-link">vals.ai ↗</span>
-      </a>
-      <a class="source-card reveal" href="https://www.tbench.ai/" target="_blank" rel="noopener noreferrer">
-        <span class="src-meta">Laude Institute · 4.1</span>
-        <span class="src-name">Terminal-Bench</span>
-        <span class="src-link">tbench.ai ↗</span>
-      </a>
-    </div>
+  </section>
+
+  <section class="section" id="benchmarks" aria-labelledby="bench-title">
+    <div class="section-head"><div><div class="kicker" aria-hidden="true">Benchmark notes</div><h2 id="bench-title" data-i18n="bench.title">Benchmark 指南</h2></div></div>
+    <div class="bench-grid" id="bench-catalog"></div>
+    <article class="scope-note"><h3 data-i18n="scope.title">如何使用这个指数</h3><p data-i18n="scope.personal"></p><p data-i18n="scope.use"></p></article>
   </section>
 
   <!-- ======================================================================
@@ -3374,7 +3514,7 @@ code {
   <section class="section" id="cost" aria-labelledby="cost-title">
     <div class="section-head reveal">
       <div>
-        <div class="kicker">05 / COST</div>
+        <div class="kicker" aria-hidden="true">COST</div>
         <h2 id="cost-title" data-i18n="cost.title">成本参考模型</h2>
       </div></div>
 
@@ -3599,6 +3739,17 @@ const METRICS = {
   pb:     { label: 'PB Full',   short: 'PB',     weight: 0,   kind: 'mult', hint: '乘数 +1.0×PB · VALS ProgramBench Accuracy' }
 };
 
+const BENCHMARK_GUIDE = [
+  {"name": "AA Coding Agent Index v2.1", "role": "FC / SWE / TB", "access": ["部分开放 (2/3 公开)", "Partial (2/3 Public)"], "tasks": ["322 题 (FrontierCode 132 + TB 66 + SWE-Atlas 124)", "322 tasks · FC 132 / TB 66 / SWE 124"], "method": ["FrontierCode-AA 2.0 (132 题私有，阻塞检查 + GPT-6 Luna 裁判 + 防作弊扫描)、Terminal-Bench 4.1 (66 题公开，容器 pass@1) 与 SWE-Atlas-QnA-AA (124 题 HF 公开，GPT-6 Luna 5 票二元通过) 等权合成，每题 3 次均值。", "Equal-weight composite of FrontierCode-AA 2.0 (132 private), Terminal-Bench 4.1 (66 public), and SWE-Atlas-QnA-AA (124 public). Mean over 3 attempts/task."], "release": "2026-11", "url": "https://artificialanalysis.ai/agents/coding-agents", "source": "https://artificialanalysis.ai/methodology/coding-agents-benchmarking", "upstream": "2026-11-19"},
+  {"name": "CursorBench 4.1", "role": "CB", "access": ["闭源私有 (内部)", "Proprietary (Internal)"], "tasks": ["真实会话多文件长程任务集", "Multi-file tasks from real sessions"], "method": ["取材自真实 Cursor 会话的模糊多文件任务，涵盖编辑、重构、排查与指令遵循；由 Cursor 内部代理评估框架结合自动化测试与评分标准打分，缺失时走公式回退。", "Ambiguous multi-file tasks from real Cursor sessions. Graded by Cursor internal automated tests & rubrics."], "release": "2026-11-18", "url": "https://cursor.com/cursorbench", "source": "https://cursor.com/blog/cursorbench", "upstream": "2026-11-18"},
+  {"name": "Terminal-Bench 4.1", "role": "TB", "access": ["公开开源 (Harbor)", "Open Source (Harbor)"], "tasks": ["66 题", "66 tasks"], "method": ["隔离容器终端任务；v4.1 加固防篡改验证器（非特权用户独立进程）并引入轨迹防作弊审查，测试套件全部通过计为 pass，报告 ±95% 置信区间。", "Isolated container terminal tasks (66 tasks). v4.1 hardens verifiers against tampering with trajectory reward-hacking review."], "release": "2026-11-09", "url": "https://www.tbench.ai/", "source": "https://www.tbench.ai/news/terminal-bench-4-0", "upstream": "2026-11-17"},
+  {"name": "VALS VCB 1-100 v1.1", "role": "VCB100", "access": ["闭源私有", "Proprietary"], "tasks": ["50 测试场景 (456 需求 / 6,022 工作流)", "50 scenarios · 456 requests / 6,022 workflows"], "method": ["基于 VCB v1.1 通过的 Web 应用，在 OpenHands V1 沙盒中连续接收最多 10 轮迭代需求（10h 预算）；GPT-6 Luna 浏览器代理执行新功能与回归测试，Claude Sonnet 5.5 复核失败判定。", "Up to 10 sequential product requests on a working VCB v1.1 app in OpenHands V1 (10h). GPT-6 Luna runs UI/regression checks; Sonnet 5.5 reviews failures."], "release": "2026-11-18", "url": "https://www.vals.ai/benchmarks/vcb-1-100-v1-1", "source": "https://www.vals.ai/benchmarks/vcb-1-100-v1-1", "upstream": "2026-11-18"},
+  {"name": "FrontierSWE v2", "role": "FSWE", "access": ["公开开源 (GitHub)", "Open Source (GitHub)"], "tasks": ["34 题 (Harbor 格式)", "34 tasks in Harbor format"], "method": ["超长程软件工程与科研任务，每题 20h 预算、5 次试验取 mean@5；统一使用 Proximus 框架在最大推理深度下运行，由确定性自动化验证器评分。", "Ultra-long-horizon tasks (34 tasks, 20h budget, mean@5) in Proximus harness at max effort, deterministic verifiers."], "release": "2026-09-02", "url": "https://www.frontierswe.com/", "source": "https://github.com/Proximal-Labs/frontier-swe-v2", "upstream": "2026-11-20"},
+  {"name": "VALS Vibe Code Bench v1.1", "role": "VCB", "access": ["闭源私有 (公开示例)", "Proprietary (Sample Public)"], "tasks": ["每应用 20–60 条 E2E UI 测试", "20–60 end-to-end tests per app"], "method": ["零到一构建全栈 Web 应用（OpenHands 沙盒，5h / 1,000 步）；Browser Use 代理执行 UI 工作流测试，单条测试子步骤 ≥90% 通过计为通过。", "Zero-to-one web app generation in OpenHands (5h / 1,000 steps). Browser Use agent runs 20–60 UI workflows."], "release": "2026-02-24", "url": "https://www.vals.ai/benchmarks/vibe-code", "source": "https://arxiv.org/html/2603.04601v3", "upstream": "2026-11-19"},
+  {"name": "VALS ProgramBench", "role": "PB", "access": ["公开开源 (隐藏测试)", "Open Source (Hidden Tests)"], "tasks": ["200 题 (>248,000 隐藏测试)", "200 tasks · over 248,000 hidden tests"], "method": ["洁净室程序重构：仅提供只执行二进制文件与文档，禁止反编译与联网，mini-SWE-agent 离线沙盒限 1,000 步 / 6h 重构源码；Fully Resolved 要求通过 100% 隐藏测试。", "Cleanroom binary reconstruction (no decompilation/internet) in mini-SWE-agent (1,000 steps / 6h). 100% hidden tests pass."], "release": "2026-05-05", "url": "https://www.vals.ai/benchmarks/programbench", "source": "https://arxiv.org/html/2605.03546v1", "upstream": "2026-11-19"},
+  {"name": "AA Intelligence Index v5.0.1", "role": "AA", "access": ["部分开放 (60% 权重私有)", "Partial (60% Private)"], "tasks": ["9 项评测 / 4 维度各 25%", "9 evaluations · 4 domains"], "method": ["通用智能综合评测覆盖知识工作、编码、科学与通用能力，四个维度各占 25%。本指数将其缩放到同一锚点，用于比较 MIX 与 AA 的差距。", "A general-intelligence composite covering knowledge work, coding, science and general ability at 25% each. This index uses it for a same-anchor comparison with MIX."], "release": "2026-10–11", "url": "https://artificialanalysis.ai/leaderboards/models", "source": "https://artificialanalysis.ai/methodology/intelligence-benchmarking", "upstream": "2026-11-22"}
+];
+
 const LABS = {
   anthropic: { name: 'Anthropic' },
   openai:    { name: 'OpenAI' },
@@ -3640,6 +3791,65 @@ const I18N = {
     'header.top': '回到顶部',
     'nav.label': '主导航',
     'nav.mobileLabel': '移动端导航',
+    "hero.snapshot": "数据快照",
+    "profile.title": "指数剖面",
+    "profile.bars": "当前模型按混合指数降序排列",
+    "profile.leaders": "指数前三",
+    "profile.count": "当前筛选 · {n} 个模型",
+    "profile.empty": "暂无匹配模型",
+    "find.search": "搜索模型名称",
+    "find.lab": "实验室",
+    "find.allLabs": "全部实验室",
+    "find.count": "显示 {n} / {total} 个模型",
+    "find.clear": "清除筛选",
+    "display.title": "显示设置",
+    "view.title": "数据视图",
+    "view.chart": "指数对照图",
+    "view.table": "分项数据表",
+    "view.chartHint": "选择模型，查看分项与得分拆解",
+    "view.tableHint": "点数值编辑百分比，点模型看完整拆解",
+    "weights.title": "调整计分系数",
+    "weights.original": "原版计分公式",
+    "weights.default": "原版",
+    "weights.custom": "个人试算",
+    "weights.reset": "恢复原版系数",
+    "weights.sum": "BASE 系数和 {v}",
+    "weights.help": "六项基础权重按输入值直接加权。缺少 CB 时，它的权重按 2∶1∶1 分给 FC、TB、FSWE。VCB 和 PB 单独调整乘数；修改后立即重算。",
+    "weights.weight": "当前系数 {w}",
+    "bench.title": "Benchmark 指南",
+    "bench.tasks": "任务规模",
+    "bench.release": "版本发布",
+    "bench.upstream": "介绍稿记录的上游更新",
+    "bench.access": "开放程度",
+    "bench.method": "方法说明",
+    "bench.source": "官方页面",
+    "bench.role": "指数中的用途",
+    "bench.parts": "FC、SWE、TB 分别进入 BASE；AA Coding 总分仅供理解上游基准。",
+    "bench.reference": "与 MIX 作同锚点对照",
+    "scope.title": "如何使用这个指数",
+    "scope.personal": "我做这个指数，是为了给自己长期使用、愿意付费的编码模型做选择。选题时我看三件事：测的是哪种能力、难度够不够、能否拉开模型差距。公开题集随时间老化，我也会重新审视它的权重。",
+    "scope.use": "如果靠后的模型已经能做好你日常九成的任务，靠前几名的分差对你可能没什么意义。原始成绩由各基准发布方提供，权重与拟合是我的判断。你可以换一组系数，再用自己的任务检验这个判断。",
+    "edit.percent": "{name} · {metric}（百分数，0–100）",
+    "edit.invalid": "请输入 0 到 100 之间的百分数",
+    "edit.help": "回车保存，Esc 取消",
+    "rail.title": "筛选与设置",
+    "pair.title": "双模型对比",
+    "pair.needTwo": "当前范围内不足两个模型。可清除筛选或切换到全部候选模型。",
+    "pair.model": "模型 {letter}",
+    "pair.note": "八项分数按 0–100% 对照。≈ 表示拟合，破折号表示缺测或使用公式回退。",
+    "dist.measure": "分布指标",
+    "dist.scope": "分布范围",
+    "dist.all": "全部候选模型",
+    "dist.visible": "跟随主表筛选",
+    "dist.frequency": "各区间模型数",
+    "dist.bins": "选择分数区间",
+    "dist.selectBin": "选择区间查看模型，可用左右方向键切换。",
+    "dist.inBin": "区间内的模型",
+    "dist.binLabel": "{range}，{n} 个模型",
+    "dist.members": "{n} 个",
+    "dist.paired": "{total} 个模型中有 {n} 个可与 AA 对照",
+    "dist.noValues": "当前范围没有可用分数",
+    "dist.emptyBin": "该区间没有模型。",
     'nav.board': '主表',
     'nav.distribution': '分布',
     'nav.readout': '读法',
@@ -3659,14 +3869,14 @@ const I18N = {
     'hero.t1': '编码模型',
     'hero.t2a': '混合',
     'hero.t2b': '指数',
-    'hero.lede': '我对模型的评价，高度拟合 Artificial Analysis Coding Agent Benchmarks（即 FrontierCode-AA 2.0 + Terminal-Bench 4.1 + SWE-Atlas-QnA-AA 三者的平均数）结合 VALS 榜单的一种复杂变体。',
+    'hero.lede': '比较八项编码评测的综合表现，查看模型分数里有多少实测、多少拟合。调整权重，可以试算适合自己开发任务的指数。',
     'hero.sub': '这个新参数以更高的区分度，为优质指标或符合真实任务的 Benchmark 赋予更多影响因子，用来区分能把事情做对、能把事情做完，和无法完成任务的模型。',
     'hero.ctaBoard': '查看实时指数',
     'hero.ctaMethod': '阅读方法',
     'hero.copy': '复制引用',
     'hero.copyTitle': '复制引用',
     'hero.metaData': '数据版本',
-    'hero.metaMain': '主表',
+    'hero.metaMain': '个主表模型',
     'hero.metaLicense': '许可',
     'hero.statModels': '候选模型',
     'hero.statMetrics': '分项指标',
@@ -3769,7 +3979,10 @@ const I18N = {
     'chart.foot1': '柱：<b>MIX</b> 归一化分 · 虚线：<b>AA</b> 同锚点刻度 · 右侧：<b>缺口</b>（pt）',
     'chart.foot2': '点行编辑 · 悬停看分项 · 拟合值带 <b>≈</b>',
     'status.observed': '实测',
-    'status.manual': '手动',
+    'status.manual': '手动改分',
+    'status.filled': '自行补分',
+    'scenario.date': '个人试算日期（可选）',
+    'weights.zeroAnchor': '归一化锚点为零，已切换到原始分。',
     'status.fitted': '拟合',
     'status.fallback': '回退',
     'status.blank': '未填',
@@ -3831,7 +4044,7 @@ const I18N = {
     'method.impute': '缺测处理',
     'method.aa': 'AA 对照',
     'method.caveats': '口径与限制',
-    'method.impute.p1': '<b>CB 缺失：</b>不插补。把 CB 的 0.20 权重按 FC +0.10、TB +0.05、FSWE +0.05 回退，重新配平到 1.00。表内显示为“回退”。',
+    'method.impute.p1': '<b>CB 缺失：</b>把 CB 权重的一半分给 FC，剩下两份平分给 TB 和 FSWE。原版系数下分别增加 0.10、0.05、0.05，总权重仍为 1。表中标记为“回退”。',
     'method.impute.p2': '<b>PB 缺失：</b>按最近地底分拟合。优先同族低阶实测；没有同族锚点时取同级邻近值或该项最低实测。',
     'method.impute.p3': '<b>VCB100 / FSWE 缺失：</b>同族优先，其次按能力邻近模型拟合。每个建议值都带来源，可在抽屉里直接改。',
     'method.note': '<b>状态标记：</b>无前缀 = 实测；<span style="color:var(--warn)">≈</span> = 拟合；<span style="color:var(--faint)">回退</span> = CB 缺失触发公式回退；<span style="color:var(--faint)">—</span> = 按 0 计。',
@@ -3923,6 +4136,65 @@ const I18N = {
     'header.top': 'Back to top',
     'nav.label': 'Main navigation',
     'nav.mobileLabel': 'Mobile navigation',
+    "hero.snapshot": "Data snapshot",
+    "profile.title": "Index profile",
+    "profile.bars": "Filtered models by descending MIX",
+    "profile.leaders": "Highest MIX",
+    "profile.count": "Current selection · {n} models",
+    "profile.empty": "No matching models",
+    "find.search": "Search models",
+    "find.lab": "Lab",
+    "find.allLabs": "All labs",
+    "find.count": "Showing {n} of {total} models",
+    "find.clear": "Clear filters",
+    "display.title": "Display settings",
+    "view.title": "Data view",
+    "view.chart": "Index chart",
+    "view.table": "Metric table",
+    "view.chartHint": "Select a model to inspect its score",
+    "view.tableHint": "Select a value to edit its percentage, or a model for details",
+    "weights.title": "Adjust coefficients",
+    "weights.original": "Original formula",
+    "weights.default": "Original",
+    "weights.custom": "Custom weights",
+    "weights.reset": "Restore original weights",
+    "weights.sum": "BASE weight total {v}",
+    "weights.help": "The six base weights apply as entered. A missing CB splits its weight across FC, TB and FSWE in a 2:1:1 ratio. VCB and PB adjust the multiplier. Changes recalculate immediately.",
+    "weights.weight": "Current coefficient {w}",
+    "bench.title": "Benchmark guide",
+    "bench.tasks": "Task set",
+    "bench.release": "Version release",
+    "bench.upstream": "Upstream update in source notes",
+    "bench.access": "Access",
+    "bench.method": "Methodology",
+    "bench.source": "Publisher",
+    "bench.role": "Role in the index",
+    "bench.parts": "FC, SWE and TB enter BASE individually. The AA Coding aggregate provides context.",
+    "bench.reference": "Same-anchor comparison with MIX",
+    "scope.title": "How to use this index",
+    "scope.personal": "I built this index to choose coding models I would use and pay for over time. I look at the skill each benchmark tests, the difficulty of its tasks and how well it distinguishes models. As public tasks age, I revisit their weight.",
+    "scope.use": "If a lower-scoring model already handles nine out of ten of your tasks, differences at the top may matter little to you. Publishers supply the benchmark results. The weights and estimates reflect my judgment. Try your own weights, then check the outcome on your own work.",
+    "edit.percent": "{name} · {metric} (percentage, 0–100)",
+    "edit.invalid": "Enter a percentage from 0 to 100",
+    "edit.help": "Enter to save, Esc to cancel",
+    "rail.title": "Filters & settings",
+    "pair.title": "Compare two",
+    "pair.needTwo": "Select a pool with at least two models to compare.",
+    "pair.model": "Model {letter}",
+    "pair.note": "Inputs share a 0–100% scale. ≈ indicates an estimate. A dash indicates missing data or formula fallback.",
+    "dist.measure": "Distribution measure",
+    "dist.scope": "Distribution scope",
+    "dist.all": "All candidates",
+    "dist.visible": "Match board filters",
+    "dist.frequency": "Models per interval",
+    "dist.bins": "Select a score interval",
+    "dist.selectBin": "Select an interval to inspect its models. Use the arrow keys to move between intervals.",
+    "dist.inBin": "Models in interval",
+    "dist.binLabel": "{range}, {n} models",
+    "dist.members": "{n} models",
+    "dist.paired": "{n} of {total} models have an AA score",
+    "dist.noValues": "No scores in this selection",
+    "dist.emptyBin": "No models in this interval.",
     'nav.board': 'Board',
     'nav.distribution': 'Distribution',
     'nav.readout': 'Readout',
@@ -3942,14 +4214,14 @@ const I18N = {
     'hero.t1': 'Coding model',
     'hero.t2a': 'Mixture',
     'hero.t2b': ' Index',
-    'hero.lede': 'My own read of these models tracks the Artificial Analysis Coding Agent Benchmarks — the average of FrontierCode-AA 2.0, Terminal-Bench 4.1 and SWE-Atlas-QnA-AA — crossed with a complex variant of the VALS leaderboards.',
+    'hero.lede': 'Compare coding models across eight benchmarks. Trace each score to its inputs, then adjust the weights to match the work you do.',
     'hero.sub': 'With finer resolution, this parameter grants more influence to high-quality, real-task benchmarks, separating models that do things right, models that merely finish, and models that cannot complete the task at all.',
     'hero.ctaBoard': 'View the live index',
     'hero.ctaMethod': 'Read the method',
     'hero.copy': 'Copy citation',
     'hero.copyTitle': 'Copy citation',
     'hero.metaData': 'Data version',
-    'hero.metaMain': 'Main board',
+    'hero.metaMain': 'on main board',
     'hero.metaLicense': 'License',
     'hero.statModels': 'Candidate models',
     'hero.statMetrics': 'Sub-metrics',
@@ -3979,9 +4251,9 @@ const I18N = {
     'controls.size': 'Text size',
     'controls.weight': 'Weight',
     'controls.chartStyle': 'Chart style',
-    'font.sarasa': 'Sarasa Mono (default)',
+    'font.sarasa': 'Sarasa Mono',
     'font.sysmono': 'System mono',
-    'font.syssans': 'System sans',
+    'font.syssans': 'System sans (default)',
     'font.sysserif': 'System serif',
     'font.notoSans': 'Source Han Sans',
     'font.notoSerif': 'Source Han Serif',
@@ -4052,7 +4324,10 @@ const I18N = {
     'chart.foot1': 'Bars: <b>MIX</b> normalised · dashed: <b>AA</b> same-anchor mark · right: <b>gap</b> (pt)',
     'chart.foot2': 'Click a row to edit · hover for inputs · fitted values carry <b>≈</b>',
     'status.observed': 'Observed',
-    'status.manual': 'Manual',
+    'status.manual': 'Edited',
+    'status.filled': 'User-filled',
+    'scenario.date': 'Personal scenario date (optional)',
+    'weights.zeroAnchor': 'The anchor is zero. Showing raw scores.',
     'status.fitted': 'Fitted',
     'status.fallback': 'Fallback',
     'status.blank': 'Blank',
@@ -4114,7 +4389,7 @@ const I18N = {
     'method.impute': 'Missing data',
     'method.aa': 'AA cross-check',
     'method.caveats': 'Caveats',
-    'method.impute.p1': '<b>CB missing:</b> not imputed. Its 0.20 weight falls back to FC +0.10, TB +0.05, FSWE +0.05, rebalanced to 1.00. Shown as “fallback” in the table.',
+    'method.impute.p1': '<b>CB missing:</b> not imputed. Half of its weight goes to FC, one quarter each to TB and FSWE. The original weights add 0.10, 0.05 and 0.05 respectively and still sum to 1. Shown as “fallback” in the table.',
     'method.impute.p2': '<b>PB missing:</b> fitted from the nearest floor value. Same-family lower-tier measurements first; without a family anchor, a nearby peer or the lowest observed value for that metric.',
     'method.impute.p3': '<b>VCB100 / FSWE missing:</b> family first, then fitted from capability-adjacent models. Every suggested value carries a source and can be edited in the drawer.',
     'method.note': '<b>Status marks:</b> no prefix = observed; <span style="color:var(--warn)">≈</span> = fitted; <span style="color:var(--faint)">fallback</span> = a missing CB triggered the formula fallback; <span style="color:var(--faint)">—</span> = counted as 0.',
@@ -4236,6 +4511,73 @@ let resetTimer = null;
 let resetArmed = false;
 let lastFocusedDrawer = null;
 let lastFocusedModal = null;
+const BASE_KEYS = KEYS.filter((key) => METRICS[key].kind === 'core');
+const DEFAULT_WEIGHTS = Object.freeze({ ...Object.fromEntries(BASE_KEYS.map((key) => [key, METRICS[key].weight])), vcb: .1, pb: 1 });
+const WORKSPACE_KEY = 'cmi-workspace-' + RELEASE_DATE;
+const originalById = new Map(INITIAL_MODELS.map((model) => [model.id, model]));
+
+function freshModels() {
+  return clone(INITIAL_MODELS).map((model) => ({ ...model, edited: {}, custom: false }));
+}
+
+function saveWorkspace() {
+  const changes = {};
+  const custom = [];
+  models.forEach((model) => {
+    if (model.custom) {
+      custom.push({ id: model.id, name: model.name, labKey: model.labKey, aa: model.aa, metrics: model.metrics });
+    } else {
+      const baseline = originalById.get(model.id);
+      const values = KEYS.filter((key) => model.edited[key] || model.metrics[key] !== baseline.metrics[key]);
+      if (values.length) changes[model.id] = Object.fromEntries(values.map((key) => [key, model.metrics[key]]));
+    }
+  });
+  try { localStorage.setItem(WORKSPACE_KEY, JSON.stringify({ changes, custom, weights: state.weights, date: state.date })); } catch {}
+}
+
+function restoreWorkspace() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(WORKSPACE_KEY) || '{}');
+    if (typeof saved.date === 'string' && /^\d{4}-\d\d-\d\d$/.test(saved.date)) state.date = saved.date;
+    const valid = (value, max = 1) => Number.isFinite(value) && value >= 0 && value <= max;
+    KEYS.forEach((key) => {
+      if (valid(saved.weights?.[key], 2)) state.weights[key] = saved.weights[key];
+    });
+    models.forEach((model) => {
+      const changes = saved.changes?.[model.id];
+      KEYS.forEach((key) => {
+        const value = changes?.[key];
+        if (value === null || valid(value)) {
+          model.metrics[key] = value;
+          if (value !== null) model.edited[key] = true;
+        }
+      });
+    });
+    for (const item of Array.isArray(saved.custom) ? saved.custom : []) {
+      if (!item || !/^custom-\d+$/.test(item.id) || typeof item.name !== 'string' || !item.name.trim() || models.some((m) => m.id === item.id)) continue;
+      const labKey = Object.hasOwn(LABS, item.labKey) ? item.labKey : 'other';
+      const metrics = Object.fromEntries(KEYS.map((k) => [k, valid(item.metrics?.[k]) ? item.metrics[k] : null]));
+      models.push({ id: item.id, name: item.name, short: item.name, labKey, lab: LABS[labKey].name,
+        metrics, aa: valid(item.aa, 100) ? item.aa : null, aaVariant: 'User', custom: true, suggest: {},
+        edited: Object.fromEntries(KEYS.filter((k) => metrics[k] !== null).map((k) => [k, true])), note: t('custom.note') });
+    }
+  } catch {}
+}
+
+function effectiveWeights(cbMissing) {
+  const w = { ...state.weights };
+  if (cbMissing) {
+    w.fc += w.cb / 2;
+    w.tb += w.cb / 4;
+    w.fswe += w.cb / 4;
+    w.cb = 0;
+  }
+  return w;
+}
+
+function multiplierText() {
+  return `0.8 + ${state.weights.vcb.toFixed(2)}·VCB + ${state.weights.pb.toFixed(2)}·PB`;
+}
 
 /* =========================================================================
    Computation
@@ -4246,7 +4588,8 @@ function getEffective(model, key) {
   if (raw !== null && raw !== undefined && raw !== '') {
     const value = Number(raw);
     if (Number.isFinite(value)) {
-      return { value, status: model.edited && model.edited[key] ? 'manual' : 'observed' };
+      if (!model.edited?.[key]) return { value, status: 'observed' };
+      return { value, status: originalById.get(model.id)?.metrics[key] == null ? 'filled' : 'manual' };
     }
   }
 
@@ -4262,6 +4605,7 @@ function getEffective(model, key) {
 }
 
 function statusMeta(status) {
+  if (status === 'filled') return { label: t('status.filled'), cls: 'filled' };
   if (status === 'observed') return { label: t('status.observed'), cls: '' };
   if (status === 'manual') return { label: t('status.manual'), cls: 'manual' };
   if (status === 'fitted') return { label: t('status.fitted'), cls: 'fit' };
@@ -4301,9 +4645,7 @@ function computeAll() {
     KEYS.forEach((k) => { eff[k] = getEffective(model, k); });
 
     const cbMissing = eff.cb.value === null || eff.cb.value === undefined;
-    const w = cbMissing
-      ? { fc: .45, cb: 0, swe: .15, tb: .20, vcb100: .10, fswe: .10 }
-      : { fc: .35, cb: .20, swe: .15, tb: .15, vcb100: .10, fswe: .05 };
+    const w = effectiveWeights(cbMissing);
 
     const contributions = {
       fc: w.fc * (eff.fc.value ?? 0),
@@ -4317,7 +4659,7 @@ function computeAll() {
     const base = Object.values(contributions).reduce((a, b) => a + b, 0);
     const vcb = eff.vcb.value ?? 0;
     const pb = eff.pb.value ?? 0;
-    const mult = .8 + .1 * vcb + pb;
+    const mult = .8 + w.vcb * vcb + w.pb * pb;
     const raw = base * mult;
 
     const missing = KEYS.filter((k) => model.metrics[k] === null || model.metrics[k] === undefined || model.metrics[k] === '');
@@ -4327,8 +4669,8 @@ function computeAll() {
   });
 
   const fable = rows.find((r) => r.model.id === 'claude-fable-5-2') || rows[0];
-  const fableRaw = Math.max(fable ? fable.raw : 1, 1e-6);
-  const maxRaw = Math.max(...rows.map((r) => r.raw), 1e-6);
+  const fableRaw = fable?.raw || 1;
+  const maxRaw = Math.max(...rows.map((r) => r.raw)) || 1;
   const aaRows = rows.filter((r) => r.model.aa !== null && r.model.aa !== undefined);
   const maxAA = Math.max(...aaRows.map((r) => Number(r.model.aa)), 1);
   const fableAA = (fable && fable.model.aa !== null && fable.model.aa !== undefined) ? Number(fable.model.aa) : maxAA;
@@ -4353,6 +4695,9 @@ function computeAll() {
 
 function getVisible(computed) {
   let rows = computed.rows;
+  const query = state.query.trim().toLowerCase();
+  if (query) rows = rows.filter(({ model }) => (model.name + ' ' + model.short).toLowerCase().includes(query));
+  if (state.lab) rows = rows.filter(({ model }) => model.labKey === state.lab);
   if (state.filter === 'strict') rows = rows.filter((r) => r.missingCount <= 2);
   else if (state.filter === 'strict1') rows = rows.filter((r) => r.missingCount <= 1);
   else if (state.filter === 'complete') rows = rows.filter((r) => r.missingCount === 0);
@@ -4395,13 +4740,20 @@ function scaleMaxFor(visible) {
 function render(opts = {}) {
   hideTooltip();
   lastComputed = computeAll();
+  const anchor = state.norm === 'fable' ? lastComputed.rows.find((r) => r.model.id === 'claude-fable-5-2')?.raw : Math.max(...lastComputed.rows.map((r) => r.raw));
+  if (state.norm !== 'raw' && !anchor) {
+    state.norm = 'raw';
+    lastComputed = computeAll();
+    showToast(t('weights.zeroAnchor'));
+  }
   const visible = getVisible(lastComputed);
 
-  renderKpis(visible, lastComputed);
-  renderChart(visible, lastComputed, opts);
-  renderTable(visible, lastComputed);
-  renderDistribution(lastComputed);
-  renderHero(visible, lastComputed);
+  const leaders = [...visible].sort((a, b) => b.display - a.display);
+  renderKpis(leaders, lastComputed);
+  renderBoardView(visible, opts);
+  renderDistribution(lastComputed, visible);
+  renderHero(leaders, lastComputed);
+  syncWorkspaceControls(visible.length);
   renderFitDetails(lastComputed);
   updateCounts(lastComputed);
   updateControlHint();
@@ -4415,26 +4767,10 @@ function render(opts = {}) {
   highlightSelection();
 }
 
-function countUp(el, to, decimals = 0, suffix = '') {
-  if (!el) return;
-  const previous = el.dataset.value !== undefined ? Number(el.dataset.value) : 0;
-  const from = Number.isFinite(previous) ? previous : 0;
-  el.dataset.value = String(to);
-
-  if (reduceMotion) {
-    el.textContent = to.toFixed(decimals) + suffix;
-    return;
-  }
-
-  const start = performance.now();
-  const duration = 620;
-  const tick = (now) => {
-    const t = Math.min(1, (now - start) / duration);
-    const eased = 1 - Math.pow(1 - t, 3);
-    el.textContent = (from + (to - from) * eased).toFixed(decimals) + suffix;
-    if (t < 1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
+function renderBoardView(visible, opts = {}) {
+  if (state.view === 'compare') renderPair(visible);
+  else if (state.view === 'table') renderTable(visible);
+  else renderChart(visible, lastComputed, opts);
 }
 
 function renderKpis(visible, computed) {
@@ -4452,11 +4788,11 @@ function renderKpis(visible, computed) {
       ? displays[(displays.length - 1) / 2]
       : (displays[displays.length / 2 - 1] + displays[displays.length / 2]) / 2)
     : 0;
-  countUp($('#kpi-median'), median, 3);
+  $('#kpi-median').textContent = displays.length ? fmt(median) : '—';
   $('#kpi-median-sub').textContent = t('kpi.median.sub', { n: visible.length });
 
   const range = displays.length ? (Math.max(...displays) - Math.min(...displays)) * 100 : 0;
-  countUp($('#kpi-range'), range, 1, ' pt');
+  $('#kpi-range').textContent = displays.length ? range.toFixed(1) + ' pt' : '—';
 
   const aaVals = visible.filter((r) => r.aaDisplay !== null).map((r) => r.aaDisplay);
   const aaRange = aaVals.length ? (Math.max(...aaVals) - Math.min(...aaVals)) * 100 : null;
@@ -4519,7 +4855,7 @@ function renderChart(visible, computed, opts = {}) {
            style="--delay:${Math.min(i * 28, 300)}ms"
            aria-label="${t('chart.aria', { name: escapeHtml(r.model.name), v: fmt(r.display), aa: r.model.aa === null ? t('status.na') : Number(r.model.aa).toFixed(1), gap: gapLabel })}">
         <div class="chart-model">
-          <span class="lab-dot" aria-hidden="true"></span>
+          <span class="chart-position" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><span class="lab-dot" aria-hidden="true"></span>
           <div style="min-width:0">
             <div class="chart-model-name">${escapeHtml(r.model.short)}</div>
             <div class="chart-model-sub">${escapeHtml(r.model.lab)} · ${t('chart.missing', { n: r.missingCount })}</div>
@@ -4532,7 +4868,6 @@ function renderChart(visible, computed, opts = {}) {
         </div>
         <div class="chart-score">
           <b>${fmt(r.display)}</b>
-          <span class="${r.gap === null ? 'gap-na' : r.gap >= 0 ? 'gap-pos' : 'gap-neg'}">${r.gap === null ? t('chart.gapNa') : signed(r.gap) + ' pt'}</span>
         </div>
         <div class="chart-gap" title="${t('chart.gapTitle', { v: gapLabel })}">
           <i class="gap-bar ${gapClass}" data-w="${gapW.toFixed(2)}" style="width:0%"></i>
@@ -4551,7 +4886,7 @@ function renderChart(visible, computed, opts = {}) {
   });
 }
 
-function renderTable(visible, computed) {
+function renderTable(visible) {
   const tbody = $('#table-body');
   if (!visible.length) {
     tbody.innerHTML = `<tr><td colspan="15" style="padding:40px;text-align:center;color:var(--muted)">${t('table.empty')}</td></tr>`;
@@ -4564,7 +4899,7 @@ function renderTable(visible, computed) {
 
     const dots = KEYS.map((k) => {
       const st = r.eff[k].status;
-      const cls = st === 'observed' || st === 'manual' ? 'on' : st === 'fitted' ? 'fit' : 'off';
+      const cls = ['observed', 'manual', 'filled'].includes(st) ? 'on' : st === 'fitted' ? 'fit' : 'off';
       const meta = statusMeta(st);
       return `<i class="${cls}" title="${escapeHtml(t('table.dotTip', { metric: METRICS[k].label, status: meta.label }))}"></i>`;
     }).join('');
@@ -4580,10 +4915,11 @@ function renderTable(visible, computed) {
 
       let title = `${METRICS[k].label} · ${meta.label}`;
       if (e.status === 'fitted' && r.model.suggest && r.model.suggest[k]) title += `${lang === 'zh' ? '：' : ': '}${fitSrcText(r.model.suggest[k].src)}`;
-      if (k === 'cb' && e.status === 'fallback') title = t('table.cbFallbackTip');
+      if (k === 'cb' && e.status === 'fallback') title = t('drawer.cbFallback');
 
       const stateClass = e.status === 'fitted' ? 'is-fit' : `is-${e.status}`;
-      return `<td class="c-metric ${stateClass}" title="${escapeHtml(title)}">${text}</td>`;
+      const label = escapeHtml(t('edit.percent', { name: r.model.name, metric: METRICS[k].label }));
+      return `<td class="c-metric ${stateClass}" title="${escapeHtml(title)}"><button type="button" class="cell-value" data-metric="${k}" aria-label="${label} · ${text}">${text}</button></td>`;
     }).join('');
 
     const gapText = r.gap === null ? '—' : signed(r.gap);
@@ -4614,6 +4950,64 @@ function renderTable(visible, computed) {
   }).join('');
 }
 
+function editTableCell(button, id) {
+  const key = button.dataset.metric;
+  const model = models.find((m) => m.id === id);
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.min = '0';
+  input.max = '100';
+  input.step = 'any';
+  input.inputMode = 'decimal';
+  input.className = 'cell-editor';
+  input.placeholder = '0–100';
+  input.title = t('edit.help');
+  input.setAttribute('aria-label', t('edit.percent', { name: model.name, metric: METRICS[key].label }));
+  const original = model.metrics[key];
+  input.value = original == null ? '' : Number((original * 100).toFixed(8));
+  button.replaceWith(input);
+  input.focus();
+  input.select();
+  let done = false;
+  const finish = (commit, focus) => {
+    if (done) return;
+    const valid = input.validity.valid;
+    if (commit && !valid && focus) { input.reportValidity(); return; }
+    done = true;
+    if (commit && !valid) showToast(t('edit.invalid'));
+    if (commit && valid && input.value !== input.defaultValue) {
+      const value = input.value === '' ? null : input.valueAsNumber / 100;
+      if (value !== original) {
+        model.metrics[key] = value;
+        if (value === null) delete model.edited[key];
+        else model.edited[key] = true;
+        saveWorkspace();
+        render({ animate: false });
+      }
+    }
+    if (input.isConnected) input.replaceWith(button);
+    if (focus) ($('#table-body tr[data-id="' + id + '"] [data-metric="' + key + '"]') || $('#model-search')).focus({ preventScroll: true });
+  };
+  input.defaultValue = input.value;
+  input.addEventListener('blur', (event) => {
+    const next = event.relatedTarget?.closest('.cell-value');
+    const nextModel = next?.closest('tr').dataset.id;
+    finish(true, false);
+    if (next && !next.isConnected) {
+      const replacement = $('#table-body tr[data-id="' + nextModel + '"] [data-metric="' + next.dataset.metric + '"]');
+      if (replacement) editTableCell(replacement, nextModel);
+      else $('#model-search').focus({ preventScroll: true });
+    }
+  });
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' || event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      finish(event.key === 'Enter', true);
+    }
+  });
+}
+
 function quantileSorted(sorted, q) {
   if (!sorted.length) return 0;
   const pos = (sorted.length - 1) * q;
@@ -4624,114 +5018,106 @@ function quantileSorted(sorted, q) {
     : sorted[base];
 }
 
-function renderDistribution(computed) {
-  const track = $('#distribution-track');
-  const axis = $('#distribution-axis');
-  const qEl = $('#distribution-quantiles');
-  const sub = $('#distribution-sub');
-  if (!track || !axis) return;
+/* Distribution explorer */
 
-  const rows = [...computed.rows].sort((a, b) => a.display - b.display);
-  if (!rows.length) {
-    track.innerHTML = `<div class="chart-empty">${t('dist.empty')}</div>`;
-    axis.innerHTML = '';
-    if (qEl) qEl.innerHTML = '';
+let distributionView = null;
+
+function renderDistribution(computed, visible) {
+  const gap = state.distValue === 'gap';
+  const pool = state.distScope === 'visible' ? visible : computed.rows;
+  const valueOf = (row) => gap ? row.gap : row.display;
+  const rows = pool.filter((row) => valueOf(row) !== null).sort((a, b) => valueOf(a) - valueOf(b));
+  const format = (value) => gap ? signed(value, 1) : fmt(value);
+  const values = rows.map(valueOf);
+  const low = values[0];
+  const high = values.at(-1);
+  const n = rows.length ? (low === high ? 1 : 8) : 0;
+  const bins = Array.from({ length: n }, () => []);
+  const step = (high - low) / (n || 1);
+  for (const row of rows) {
+    const index = step ? Math.min(n - 1, Math.floor((valueOf(row) - low) / step)) : 0;
+    bins[index].push(row);
+  }
+  const peak = Math.max(1, ...bins.map((bin) => bin.length));
+  const edge = (i) => i === n ? high : low + i * step;
+  const range = (i) => low === high ? format(low) : format(edge(i)) + ' – ' + format(edge(i + 1));
+  distributionView = { bins, range, format, valueOf };
+  if (state.distBin === null || state.distBin >= n) {
+    state.distBin = n ? bins.reduce((best, bin, i) => bin.length > bins[best].length ? i : best, 0) : null;
+  }
+  $('#dist-scope').value = state.distScope;
+  $$('#dist-value button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.distValue === state.distValue)));
+  $('#dist-unit').textContent = gap ? 'Δ AA (pt)' : 'MIX';
+  $('#dist-sub').textContent = gap ? t('dist.paired', { n: rows.length, total: pool.length }) : t('dist.sub', { n: rows.length });
+  $('#dist-median').textContent = n ? format(quantileSorted(values, .5)) : '—';
+  $('#dist-quantiles').innerHTML = [['MIN', 0], ['P25', .25], ['P75', .75], ['MAX', 1]].map(([label, q]) =>
+    `<div><span>${label}</span><b>${n ? format(quantileSorted(values, q)) : '—'}</b></div>`).join('');
+  const track = $('#dist-bins');
+  track.style.setProperty('--bins', n || 1);
+  track.innerHTML = n ? bins.map((bin, i) => {
+    const label = t('dist.binLabel', { range: range(i), n: bin.length });
+    return `<button type="button" class="bin" data-bin="${i}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}"
+      style="--height:${bin.length / peak * 100}%;--layers:${Math.max(1, bin.length)}"><i><b>${bin.length}</b></i></button>`;
+  }).join('') : `<span class="atlas-empty">${t('dist.noValues')}</span>`;
+  $('#dist-axis').innerHTML = n ? [0, ...(n > 1 ? [n / 2, n] : [])].map((i) => `<span>${format(edge(i))}</span>`).join('') : '';
+  updateDistributionBin();
+}
+
+function updateDistributionBin() {
+  const { bins, range, valueOf, format } = distributionView;
+  const index = state.distBin;
+  const members = bins[index] || [];
+  $$('#dist-bins button').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.bin) === index)));
+  $('#dist-interval').textContent = index === null ? '—' : range(index);
+  $('#dist-bin-count').textContent = t('dist.members', { n: members.length });
+  $('#dist-members').innerHTML = members.length ? [...members].reverse().map((row) =>
+    `<button type="button" data-id="${row.model.id}"><i class="lab-dot lab-${row.model.labKey}"></i><span>${escapeHtml(row.model.name)}</span><b>${format(valueOf(row))}</b></button>`).join('')
+    : `<p>${t('dist.emptyBin')}</p>`;
+}
+
+function renderPair(visible) {
+  const panel = $('#pair-panel');
+  if (visible.length < 2) {
+    panel.innerHTML = `<p class="pair-empty">${t('pair.needTwo')}</p>`;
     return;
   }
-
-  const scores = rows.map((r) => r.display);
-  const min = Math.min(...scores);
-  const max = Math.max(...scores);
-  const pad = Math.max((max - min) * .08, .01);
-  const lo = min - pad;
-  const hi = max + pad;
-  const xFor = (v) => 4 + ((v - lo) / (hi - lo || 1)) * 92;
-
-  const ticks = [0, .25, .5, .75, 1].map((t) => lo + (hi - lo) * t);
-  axis.innerHTML = ticks.map((v) => `<span style="--x:${xFor(v).toFixed(2)}%">${v.toFixed(2)}</span>`).join('');
-
-  const binCount = 9;
-  const binWidth = (hi - lo) / binCount;
-  const bins = Array.from({ length: binCount }, () => []);
-  rows.forEach((r) => {
-    const idx = clamp(Math.floor((r.display - lo) / binWidth), 0, binCount - 1);
-    bins[idx].push(r);
-  });
-
-  const bars = bins.map((items, bi) => {
-    const center = 4 + ((bi + .5) / binCount) * 92;
-    const width = (92 / binCount) - 1.2;
-    const height = Math.max(8, items.length * 13 + 8);
-    return `<i class="dist-bin" style="--x:${center.toFixed(2)}%;--w:${width.toFixed(2)}%;--h:${height}px"></i>`;
+  const rows = [...visible].sort((a, b) => b.display - a.display);
+  const first = rows.find((r) => r.model.id === state.pair[0]) || rows[0];
+  const second = rows.find((r) => r.model.id === state.pair[1] && r !== first) || rows.find((r) => r !== first);
+  const pair = [first, second];
+  state.pair = pair.map((r) => r.model.id);
+  const selectors = pair.map((row, i) => {
+    const letter = i ? 'B' : 'A';
+    const options = rows.map((r) => `<option value="${r.model.id}" ${r === row ? 'selected' : ''}>${escapeHtml(r.model.name)}</option>`).join('');
+    return `<div class="pair-choice slot-${letter}"><label for="pair-${letter}">${t('pair.model', { letter })}</label>
+      <div class="select-wrap"><select id="pair-${letter}" data-slot="${i}">${options}</select></div>
+      <strong>${fmt(row.display)}</strong><small>MIX</small></div>`;
   }).join('');
-
-  const dots = bins.map((items, bi) => {
-    const center = 4 + ((bi + .5) / binCount) * 92;
-    return items.map((r, j) => (
-      `<button class="dist-dot lab-${r.model.labKey}" type="button" data-id="${r.model.id}"
-        style="--x:${center.toFixed(2)}%;--y:${10 + j * 13}px"
-        aria-label="${t('dist.dotAria', { name: escapeHtml(r.model.name), v: fmt(r.display) })}"></button>`
-    )).join('');
+  const metrics = KEYS.map((key) => {
+    const values = pair.map((r) => r.eff[key]);
+    const marks = values.map(({ value, status }, i) => value === null || status === 'missing' ? '' :
+      `<i class="pair-dot slot-${i ? 'B' : 'A'}" style="left:${value * 100}%" title="${escapeHtml(statusMeta(status).label)}"></i>`).join('');
+    const label = ({ value, status }) => value === null || status === 'missing' ? '—' : (status === 'fitted' ? '≈' : '') + pct(value);
+    return `<div class="pair-metric"><span>${METRICS[key].short}</span><b>${label(values[0])}</b>
+      <div class="pair-track" aria-hidden="true">${marks}</div><b>${label(values[1])}</b></div>`;
   }).join('');
-
-  const grid = ticks.map((v) => `<i class="dist-grid" style="--x:${xFor(v).toFixed(2)}%"></i>`).join('');
-  track.innerHTML = `${grid}${bars}${dots}<div class="distribution-tooltip" id="distribution-tooltip" role="tooltip" aria-hidden="true"></div>`;
-
-  if (qEl) {
-    const stats = [
-      ['MIN', quantileSorted(scores, 0)],
-      ['P25', quantileSorted(scores, .25)],
-      ['MEDIAN', quantileSorted(scores, .5)],
-      ['P75', quantileSorted(scores, .75)],
-      ['MAX', quantileSorted(scores, 1)]
-    ];
-    qEl.innerHTML = stats.map(([label, val]) => `<span><b>${fmt(val)}</b>${label}</span>`).join('');
-  }
-  if (sub) sub.textContent = t('dist.sub', { n: rows.length });
-}
-
-function showDistTooltip(id, event) {
-  if (!lastComputed) return;
-  const r = lastComputed.rows.find((row) => row.model.id === id);
-  if (!r) return;
-  const tip = $('#distribution-tooltip');
-  if (!tip) return;
-  tip.innerHTML = `
-    <div class="dt-name">${escapeHtml(r.model.name)}</div>
-    <div class="dt-meta">${t('dist.meta', { lab: escapeHtml(r.model.lab), n: r.missingCount })}</div>
-    <div class="dt-score">${fmt(r.display)}</div>
-    <div class="dt-row">${t('dist.aaGap', { aa: r.model.aa === null ? t('status.na') : Number(r.model.aa).toFixed(1), gap: r.gap === null ? '—' : signed(r.gap) })}</div>`;
-  tip.classList.add('show');
-  tip.setAttribute('aria-hidden', 'false');
-  positionDistTooltip(event);
-}
-
-function positionDistTooltip(event) {
-  const tip = $('#distribution-tooltip');
-  const track = $('#distribution-track');
-  if (!tip || !track) return;
-  const tr = track.getBoundingClientRect();
-  const tw = tip.offsetWidth;
-  const th = tip.offsetHeight;
-  let x = event.clientX - tr.left + 14;
-  let y = event.clientY - tr.top - th - 14;
-  if (x + tw > tr.width - 8) x = event.clientX - tr.left - tw - 14;
-  if (y < 6) y = event.clientY - tr.top + 16;
-  tip.style.left = `${Math.max(6, x)}px`;
-  tip.style.top = `${Math.max(6, y)}px`;
-}
-
-function hideDistTooltip() {
-  const tip = $('#distribution-tooltip');
-  if (!tip) return;
-  tip.classList.remove('show');
-  tip.setAttribute('aria-hidden', 'true');
+  panel.innerHTML = `<div class="pair-choices">${selectors}</div>
+    <div class="pair-metric pair-labels"><span>${t('fit.thMetric')}</span><b>A</b><span>0% – 100%</span><b>B</b></div>
+    ${metrics}<p class="pair-note">${t('pair.note')}</p>`;
 }
 
 function renderHero(visible, computed) {
   const top = visible.slice(0, 3);
   const list = $('#signal-list');
   const max = top.length ? top[0].display : 1;
+  const ceiling = Math.max(.1, Math.ceil(max * 10) / 10);
+  $('#profile-max').textContent = ceiling.toFixed(1);
+  const custom = KEYS.some((k) => state.weights[k] !== DEFAULT_WEIGHTS[k]);
+  $('#profile-sample').textContent = t('profile.count', { n: visible.length }) + (custom ? ' · ' + t('weights.custom') : '');
+  $('#profile-bars').innerHTML = visible.length ? visible.map((row) => {
+    const label = escapeHtml(row.model.name + ' · MIX ' + fmt(row.display));
+    return `<button type="button" class="profile-bar" data-id="${row.model.id}" aria-label="${label}" title="${label}" style="--height:${row.display / ceiling * 100}%"><i></i></button>`;
+  }).join('') : `<span class="profile-empty">${t('profile.empty')}</span>`;
 
   if (!top.length) {
     list.innerHTML = `<div class="signal-row"><span class="signal-rank">—</span><span class="lab-dot lab-other"></span><span class="signal-name dim">${t('signal.empty')}</span><span class="signal-score dim">—</span><span class="signal-bar"><i></i></span></div>`;
@@ -4742,11 +5128,7 @@ function renderHero(visible, computed) {
         <span class="lab-dot lab-${r.model.labKey}" aria-hidden="true"></span>
         <span class="signal-name">${escapeHtml(r.model.short)}</span>
         <span class="signal-score">${fmt(r.display)}</span>
-        <span class="signal-bar"><i class="lab-${r.model.labKey}" data-w="${(r.display / max * 100).toFixed(1)}" style="--w:0%"></i></span>
       </div>`).join('');
-    requestAnimationFrame(() => {
-      $$('#signal-list .signal-bar i').forEach((el) => el.style.setProperty('--w', `${el.dataset.w}%`));
-    });
   }
 
   $('#signal-anchor').textContent = state.norm === 'fable' ? 'FABLE = 1.000' : state.norm === 'max' ? 'MAX = 1.000' : 'RAW SCALE';
@@ -4796,6 +5178,65 @@ function updateCounts(computed) {
   });
   const heroStrict = $('#hero-strict-count');
   if (heroStrict) heroStrict.textContent = counts.strict;
+  $('#hero-total-count').textContent = counts.all;
+}
+
+function buildControls() {
+  for (const [key, lab] of Object.entries(LABS)) {
+    $('#lab-filter').add(new Option(lab.name, key));
+  }
+  $('#weight-fields').innerHTML = KEYS.map((key) => `
+    <div class="weight-field"><span id="weight-label-${key}">${METRICS[key].short} <small>${METRICS[key].kind === 'core' ? 'BASE' : 'MULT'}</small></span>
+      <input type="range" data-weight="${key}" aria-labelledby="weight-label-${key}" min="0" max="2" step="0.01">
+      <input type="number" data-weight-entry="${key}" aria-labelledby="weight-label-${key}" min="0" max="2" step="0.01" inputmode="decimal"></div>`).join('');
+}
+
+function syncWorkspaceControls(count) {
+  $('#model-search').value = state.query;
+  $('#lab-filter').value = state.lab;
+  $('#result-count').textContent = t('find.count', { n: count, total: models.length });
+  $('#clear-filters').hidden = !state.query && !state.lab && state.filter === 'all';
+  const custom = KEYS.some((key) => state.weights[key] !== DEFAULT_WEIGHTS[key]);
+  $('#weight-status').textContent = t(custom ? 'weights.custom' : 'weights.default');
+  $('#weight-settings').classList.toggle('custom', custom);
+  $('#weight-default').disabled = !custom;
+  $('#weight-sum').textContent = t('weights.sum', { v: BASE_KEYS.reduce((sum, key) => sum + state.weights[key], 0).toFixed(2) });
+  $('#active-equation').textContent = 'BASE = ' + BASE_KEYS.map((k) => state.weights[k].toFixed(2) + '·' + METRICS[k].short).join(' + ') + '\nMULT = ' + multiplierText();
+  $('#scenario-date').value = state.date;
+  for (const input of $$('#weight-fields [data-weight]')) {
+    const value = state.weights[input.dataset.weight];
+    input.value = value;
+    if (document.activeElement !== input.nextElementSibling) input.nextElementSibling.value = value.toFixed(2);
+  }
+  for (const [i, th] of $$('#metric-table th.group-core, #metric-table th.group-mult').slice(0, 8).entries()) {
+    th.title = METRICS[KEYS[i]].label + ' · ' + t('weights.weight', { w: state.weights[KEYS[i]].toFixed(2) });
+  }
+  const table = state.view === 'table';
+  $('#metric-table').hidden = !table;
+  $('#table-edit-hint').hidden = !table;
+  $('#table-legend').hidden = !table;
+  $('#chart-wrap').hidden = state.view !== 'chart';
+  $('#pair-panel').hidden = state.view !== 'compare';
+  $$('#view-seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === state.view)));
+}
+
+function renderGuide() {
+  const catalog = $('#bench-catalog');
+  const expanded = new Set($$('details[open]', catalog).map((el) => el.id));
+  if (!catalog.children.length) expanded.add('guide-fc');
+  const keys = ['fc', 'cb', 'tb', 'vcb100', 'fswe', 'vcb', 'pb', 'aa'];
+  const index = lang === 'zh' ? 0 : 1;
+  catalog.innerHTML = BENCHMARK_GUIDE.map((b, i) => {
+    const key = keys[i];
+    const id = 'guide-' + key;
+    const role = i === 0 ? t('bench.parts') : key === 'aa' ? t('bench.reference') : (METRICS[key].kind === 'core' ? 'BASE' : 'MULT') + ' · ' + b.role;
+    const link = (url, label) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    return `<details class="bench-entry" id="${id}" ${expanded.has(id) ? 'open' : ''}><summary>
+      <span><small>${b.role}</small><strong>${escapeHtml(b.name)}</strong></span></summary>
+      <div class="bench-body"><p>${escapeHtml(b.method[index])}</p><dl>
+      ${[['bench.tasks', b.tasks[index]], ['bench.access', b.access[index]], ['bench.release', b.release], ['bench.upstream', b.upstream], ['bench.role', role]].map(([label, value]) => `<div><dt>${t(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}
+      </dl><div class="bench-links">${link(b.url, t('bench.source'))}${b.url === b.source ? '' : link(b.source, t('bench.method'))}</div></div></details>`;
+  }).join('');
 }
 
 function updateControlHint() {
@@ -4838,7 +5279,7 @@ function openDrawer(id) {
   if (!row) return;
 
   state.selected = id;
-  lastFocusedDrawer = document.activeElement;
+  if (!$('#drawer').classList.contains('open')) lastFocusedDrawer = document.activeElement;
 
   const drawer = $('#drawer');
   drawer.classList.add('open');
@@ -4851,7 +5292,7 @@ function openDrawer(id) {
 
   setTimeout(() => {
     const first = $('#drawer-fields input');
-    if (first) first.focus({ preventScroll: true });
+    if (first && drawer.classList.contains('open')) first.focus({ preventScroll: true });
   }, 120);
 }
 
@@ -4908,10 +5349,10 @@ function renderDrawerFields(row) {
     else if (e.status === 'missing') placeholder = t('drawer.placeholder.zero');
 
     const hint = key === 'cb'
-      ? t('drawer.hint.cb')
+      ? t('weights.weight', { w: state.weights.cb.toFixed(2) })
       : metric.kind === 'mult'
-        ? t('drawer.hint.mult')
-        : t('drawer.hint.core', { w: metric.weight.toFixed(2) });
+        ? t('weights.weight', { w: state.weights[key].toFixed(2) })
+        : t('drawer.hint.core', { w: row.w[key].toFixed(2) });
 
     return `
       <label class="field${hasRaw ? '' : ' is-missing'}">
@@ -4965,6 +5406,7 @@ function handleDrawerInput(event) {
   status.className = `field-status ${meta.cls}`;
   field.classList.toggle('is-missing', target.metrics[key] === null || target.metrics[key] === undefined || target.metrics[key] === '');
 
+  saveWorkspace();
   clearTimeout(drawerTimer);
   drawerTimer = setTimeout(() => render({ animate: false }), 180);
 }
@@ -4991,6 +5433,7 @@ function handleDrawerReset(event) {
   }
   delete target.edited[key];
 
+  saveWorkspace();
   render({ animate: false });
   updateDrawer(computeAll(), { fields: true });
   const input = $(`#drawer-fields input[data-key="${key}"]`);
@@ -5016,9 +5459,9 @@ function updateDrawerBreakdown(row) {
         <div class="break-track"><i style="--w:${(value / max * 100).toFixed(1)}%;--c:${color}"></i></div>
         <span>${fmt(value)}</span>
       </div>`).join('')}
-    <div class="break-total"><span>MULT = 0.8 + 0.1×VCB + PB</span><b>${row.mult.toFixed(3)}×</b></div>
+    <div class="break-total"><span>MULT = ${multiplierText()}</span><b>${row.mult.toFixed(3)}×</b></div>
     <div class="break-total"><span>RAW = BASE × MULT</span><b>${fmt(row.raw)}</b></div>
-    ${row.cbMissing ? `<div class="break-total" style="color:var(--warn)"><span>${t('drawer.cbFallback')}</span><span>FC +0.10 / TB +0.05 / FSWE +0.05</span></div>` : ''}
+    ${row.cbMissing ? `<div class="break-total"><span>${t('drawer.cbFallback')}</span><span>FC +${state.weights.cb / 2} / TB +${state.weights.cb / 4} / FSWE +${state.weights.cb / 4}</span></div>` : ''}
   `;
 }
 
@@ -5069,7 +5512,7 @@ function openModal() {
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   syncScrollLock();
-  setTimeout(() => { const name = $('#new-name'); if (name) name.focus({ preventScroll: true }); }, 100);
+  setTimeout(() => { if (modal.classList.contains('open')) $('#new-name').focus({ preventScroll: true }); }, 100);
 }
 
 function closeModal() {
@@ -5104,7 +5547,7 @@ function applyTheme(theme, persist = true) {
     meta.name = 'theme-color';
     document.head.appendChild(meta);
   }
-  meta.content = theme === 'dark' ? '#0a0b0d' : '#f2efe7';
+  meta.content = theme === 'dark' ? '#11141a' : '#f8f8f5';
 }
 
 function toggleTheme(event) {
@@ -5154,6 +5597,7 @@ function setLang(next, persist = true) {
 
   if (persist) { try { localStorage.setItem('cmi-lang', lang); } catch (e) {} }
   applyStaticI18n();
+  renderGuide();
   applyTheme(state.theme, false);
   render({ animate: false });
 }
@@ -5169,7 +5613,7 @@ function applyFont(value, persist = true) {
       selectValue = key;
     }
   }
-  if (!stack) { stack = FONT_STACKS.sarasa; selectValue = 'sarasa'; }
+  if (!stack) { stack = FONT_STACKS.syssans; selectValue = 'syssans'; }
   state.font = selectValue;
   document.documentElement.style.setProperty('--font-sans', stack);
 
@@ -5259,7 +5703,7 @@ function applyChartStyle(style, persist = true) {
 
 async function scanLocalFonts() {
   try {
-    const fonts = await navigator.queryLocalFonts();
+    const fonts = await window.queryLocalFonts();
     const sel = $('#font-select');
     const seen = new Set(Array.from(sel.options).map((o) => o.value));
     let added = 0;
@@ -5317,8 +5761,7 @@ function csvEscape(value) {
 }
 
 function exportCsv() {
-  const computed = lastComputed || computeAll();
-  const rows = getVisible(computed);
+  const rows = getVisible(computeAll());
   if (!rows.length) {
     showToast(t('toast.export.empty'));
     return;
@@ -5326,7 +5769,8 @@ function exportCsv() {
 
   const headers = [
     'Rank', 'Model', 'Lab', 'MIX', 'AA_v5.0.1', 'AA_gap_pt', 'Raw', 'Base', 'Multiplier',
-    'Missing', 'FC2.0', 'CB4.1', 'SWE_Atlas', 'TB4.1', 'VCB100', 'FSWE2', 'VCB1.1', 'PB_Full', 'Fitted'
+    'Missing', 'FC2.0', 'CB4.1', 'SWE_Atlas', 'TB4.1', 'VCB100', 'FSWE2', 'VCB1.1', 'PB_Full', 'Fitted',
+    'Snapshot', 'Normalization', 'Imputation', ...KEYS.map((key) => 'Weight_' + key), 'Scenario_date', 'Manual_inputs'
   ];
 
   const lines = rows.map((r, i) => {
@@ -5348,7 +5792,8 @@ function exportCsv() {
       r.mult.toFixed(4),
       r.missingCount,
       ...vals,
-      fitted
+      fitted, RELEASE_DATE, state.norm, state.impute, ...KEYS.map((key) => state.weights[key]), state.date,
+      KEYS.filter((key) => r.model.edited[key]).map((key) => key + '=' + r.model.metrics[key]).join('|')
     ].map(csvEscape).join(',');
   });
 
@@ -5366,7 +5811,10 @@ function exportCsv() {
 }
 
 function copyCitation() {
-  const text = `2youg1. (2026). Coding Model Mixture Index v1.0 [Data visualization]. https://github.com/2youg1. Snapshot: ${RELEASE_DATE}. License: CC BY-NC-SA 4.0.`;
+  const custom = KEYS.some((key) => state.weights[key] !== DEFAULT_WEIGHTS[key]);
+  const weights = custom ? ' Custom weights: ' + KEYS.map((key) => key + '=' + state.weights[key]).join(', ') + '.' : '';
+  const date = state.date ? ' Scenario date: ' + state.date + '.' : '';
+  const text = `2youg1. (2026). Coding Model Mixture Index v1.0 [Data visualization]. https://github.com/2youg1/21BenchMixIndex. Snapshot: ${RELEASE_DATE}.${weights}${date} License: CC BY-NC-SA 4.0.`;
   copyText(text).then(() => showToast(t('toast.citation.ok'))).catch(() => showToast(t('toast.citation.fail')));
 }
 
@@ -5427,6 +5875,9 @@ function addModelFromForm(event) {
     || (state.filter === 'strict1' && missing <= 1)
     || (state.filter === 'complete' && missing === 0);
   if (!wouldShow) state.filter = 'all';
+  if (state.lab && state.lab !== labKey) state.lab = '';
+  if (!name.toLowerCase().includes(state.query.trim().toLowerCase())) state.query = '';
+  saveWorkspace();
 
   form.reset();
   closeModal();
@@ -5509,7 +5960,16 @@ function hideTooltip() {
    ========================================================================= */
 
 function resetAll() {
-  models = clone(INITIAL_MODELS).map((m) => ({ ...m, edited: {}, custom: false }));
+  models = freshModels();
+  state.weights = { ...DEFAULT_WEIGHTS };
+  state.date = '';
+  state.distBin = null;
+  state.distScope = 'all';
+  state.distValue = 'mix';
+  state.pair = [];
+  state.query = '';
+  state.lab = '';
+  saveWorkspace();
   state.filter = 'strict';
   state.norm = 'fable';
   state.impute = 'recommended';
@@ -5588,31 +6048,106 @@ function setupScroll() {
   update();
 }
 
-function setupHeroGlow() {
-  const hero = $('.hero');
-  if (!hero || !window.matchMedia('(pointer:fine)').matches) return;
-  let ticking = false;
-  hero.addEventListener('pointermove', (e) => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      const rect = hero.getBoundingClientRect();
-      hero.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-      hero.style.setProperty('--my', `${e.clientY - rect.top}px`);
-      ticking = false;
-    });
-  });
-  hero.addEventListener('pointerleave', () => {
-    hero.style.setProperty('--mx', '28%');
-    hero.style.setProperty('--my', '24%');
-  });
-}
-
 /* =========================================================================
    Events
    ========================================================================= */
 
 function bindEvents() {
+  const rail = $('#board-rail');
+  const railToggle = $('#toggle-rail');
+  const compactBoard = matchMedia('(max-width: 880px)');
+  const setRail = (open) => {
+    rail.hidden = !open;
+    $('.work-layout').classList.toggle('rail-closed', !open);
+    railToggle.setAttribute('aria-expanded', String(open));
+  };
+  setRail(!compactBoard.matches);
+  compactBoard.addEventListener('change', () => setRail(!compactBoard.matches));
+  railToggle.addEventListener('click', () => setRail(rail.hidden));
+  $('#dist-scope').addEventListener('change', (e) => {
+    state.distScope = e.target.value;
+    state.distBin = null;
+    renderDistribution(lastComputed, getVisible(lastComputed));
+  });
+  $('#dist-value').addEventListener('click', (e) => {
+    const button = e.target.closest('[data-dist-value]');
+    if (!button) return;
+    state.distValue = button.dataset.distValue;
+    state.distBin = null;
+    renderDistribution(lastComputed, getVisible(lastComputed));
+  });
+  $('#dist-bins').addEventListener('click', (e) => {
+    const button = e.target.closest('[data-bin]');
+    if (button) { state.distBin = Number(button.dataset.bin); updateDistributionBin(); }
+  });
+  $('#dist-bins').addEventListener('keydown', (e) => {
+    const buttons = $$('#dist-bins button');
+    const index = buttons.indexOf(e.target);
+    if (index === -1) return;
+    const target = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: buttons.length - 1 }[e.key];
+    if (target === undefined) return;
+    e.preventDefault();
+    const button = buttons[clamp(target, 0, buttons.length - 1)];
+    button.focus(); button.click();
+  });
+  $('#dist-members').addEventListener('click', (e) => {
+    const button = e.target.closest('[data-id]');
+    if (button) openDrawer(button.dataset.id);
+  });
+  $('#pair-panel').addEventListener('change', (e) => {
+    if (!e.target.matches('[data-slot]')) return;
+    const slot = Number(e.target.dataset.slot);
+    const other = 1 - slot;
+    if (state.pair[other] === e.target.value) state.pair[other] = state.pair[slot];
+    state.pair[slot] = e.target.value;
+    renderPair(getVisible(lastComputed));
+    $('#pair-panel [data-slot="' + slot + '"]').focus({ preventScroll: true });
+  });
+  $('#model-search').addEventListener('input', (e) => { state.query = e.target.value; render({ animate: false }); });
+  $('#lab-filter').addEventListener('change', (e) => { state.lab = e.target.value; render({ animate: false }); });
+  $('#clear-filters').addEventListener('click', () => {
+    state.lab = ''; state.query = ''; state.filter = 'all';
+    render(); $('#model-search').focus();
+  });
+  $('#view-seg').addEventListener('click', (e) => {
+    const button = e.target.closest('[data-view]');
+    if (!button) return;
+    state.view = button.dataset.view;
+    const visible = getVisible(lastComputed);
+    syncWorkspaceControls(visible.length);
+    renderBoardView(visible, { animate: false });
+  });
+  $('#weight-fields').addEventListener('input', (e) => {
+    if (!e.target.matches('[data-weight]')) return;
+    state.weights[e.target.dataset.weight] = e.target.valueAsNumber;
+    render({ animate: false });
+  });
+  $('#weight-fields').addEventListener('change', (e) => {
+    const input = e.target;
+    const key = input.dataset.weightEntry;
+    if (key) {
+      if (input.value !== '' && input.validity.valid) state.weights[key] = input.valueAsNumber;
+      input.value = state.weights[key].toFixed(2);
+      render({ animate: false });
+    }
+    saveWorkspace();
+  });
+  $('#scenario-date').addEventListener('change', (e) => {
+    if (e.target.validity.valid) { state.date = e.target.value; saveWorkspace(); }
+  });
+  $('#weight-default').addEventListener('click', () => {
+    state.weights = { ...DEFAULT_WEIGHTS };
+    saveWorkspace(); render();
+    $('#weight-settings summary').focus();
+  });
+  $('#profile-bars').addEventListener('click', (e) => {
+    const button = e.target.closest('button[data-id]');
+    if (button) openDrawer(button.dataset.id);
+  });
+  $('#metric-table thead').addEventListener('click', (e) => {
+    const link = e.target.closest('a[href^="#guide-"]');
+    if (link) $(link.hash).open = true;
+  });
   // Theme
   $('#theme-toggle').addEventListener('click', toggleTheme);
 
@@ -5631,7 +6166,7 @@ function bindEvents() {
     applyChartStyle(b.dataset.chartstyle);
   });
   const scanBtn = $('#btn-scan-fonts');
-  if (scanBtn && navigator.queryLocalFonts) {
+  if (scanBtn && window.queryLocalFonts) {
     scanBtn.style.display = '';
     scanBtn.addEventListener('click', scanLocalFonts);
   }
@@ -5681,33 +6216,6 @@ function bindEvents() {
     render();
   });
 
-  // Distribution dots
-  const distTrack = $('#distribution-track');
-  distTrack.addEventListener('click', (e) => {
-    const dot = e.target.closest('.dist-dot');
-    if (dot) openDrawer(dot.dataset.id);
-  });
-  distTrack.addEventListener('keydown', (e) => {
-    const dot = e.target.closest('.dist-dot');
-    if (!dot) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openDrawer(dot.dataset.id);
-    }
-  });
-  distTrack.addEventListener('pointerover', (e) => {
-    const dot = e.target.closest('.dist-dot');
-    if (dot) showDistTooltip(dot.dataset.id, e);
-  });
-  distTrack.addEventListener('pointermove', (e) => {
-    const tip = $('#distribution-tooltip');
-    if (tip && tip.classList.contains('show')) positionDistTooltip(e);
-  });
-  distTrack.addEventListener('pointerout', (e) => {
-    const dot = e.target.closest('.dist-dot');
-    if (dot && (!e.relatedTarget || !e.relatedTarget.closest('.dist-dot'))) hideDistTooltip();
-  });
-
   // Chart rows
   const chartRows = $('#chart-rows');
   chartRows.addEventListener('click', (e) => {
@@ -5738,9 +6246,13 @@ function bindEvents() {
   const tableBody = $('#table-body');
   tableBody.addEventListener('click', (e) => {
     const row = e.target.closest('tr[data-id]');
+    if (e.target.matches('.cell-editor')) return;
+    const button = e.target.closest('[data-metric]');
+    if (button && row) { editTableCell(button, row.dataset.id); return; }
     if (row) openDrawer(row.dataset.id);
   });
   tableBody.addEventListener('keydown', (e) => {
+    if (e.target.closest('input,button')) return;
     const row = e.target.closest('tr[data-id]');
     if (!row) return;
     if (e.key === 'Enter' || e.key === ' ') {
@@ -5790,6 +6302,7 @@ function bindEvents() {
       target.suggest = {};
     }
     target.edited = {};
+    saveWorkspace();
     render({ animate: false });
     updateDrawer(computeAll(), { fields: true });
     showToast(t('toast.modelReset'));
@@ -5851,32 +6364,35 @@ function syncReleaseDate() {
 
 function init() {
   syncReleaseDate();
-  models = clone(INITIAL_MODELS).map((m) => ({ ...m, edited: {}, custom: false }));
+  models = freshModels();
 
-  let storedFont = 'sarasa';
+  let storedFont = 'syssans';
   let storedSize = 100;
   let storedWeight = 0;
   let storedChartStyle = 'bars';
   try {
-    storedFont = localStorage.getItem('cmi-font') || 'sarasa';
+    storedFont = localStorage.getItem('cmi-font') || 'syssans';
     storedSize = Number(localStorage.getItem('cmi-fontsize')) || 100;
     storedWeight = Number(localStorage.getItem('cmi-weight')) || 0;
     storedChartStyle = localStorage.getItem('cmi-chartstyle') || 'bars';
   } catch (e) {}
 
   state = {
+    query: '', lab: '', date: '', view: 'chart', pair: [], distScope: 'all', distValue: 'mix', distBin: null, weights: { ...DEFAULT_WEIGHTS },
     filter: 'strict',
     norm: 'fable',
     impute: 'recommended',
     sort: 'score',
     selected: null,
     theme: document.documentElement.dataset.theme || 'light',
-    font: 'sarasa',
+    font: 'syssans',
     fontsize: 100,
     weight: 0,
     chartStyle: 'bars'
   };
 
+  restoreWorkspace();
+  buildControls();
   applyTheme(state.theme, false);
   applyFont(storedFont, false);
   applyFontSize(storedSize, false);
@@ -5885,19 +6401,12 @@ function init() {
   bindEvents();
   setupReveal();
   setupScroll();
-  setupHeroGlow();
   setLang(lang, false);
-  render();
 
   requestAnimationFrame(revealInView);
   setTimeout(revealInView, 260);
   setTimeout(revealInView, 1100);
 
-  $$('[data-countup]').forEach((el, i) => {
-    const target = Number(el.dataset.countup);
-    const suffix = el.dataset.suffix || '';
-    setTimeout(() => countUp(el, target, 0, suffix), 180 + i * 70);
-  });
 }
 
 init();
